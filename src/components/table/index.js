@@ -298,12 +298,11 @@ const Tables = ({ headings, data, name }) => {
                                             <td>
                                                 {
                                                     <div className='d-flex'>
-                                                        {(item['missingFields'])?.map((field) => (
-                                                            <>
-                                                                <p className='ms-1' key={field}>{field},</p>
-                                                            </>
-                                                        ))}
-                                                        are missing
+                                                        {item['missingFields']?.length > 0 && (
+                                                            <p className='ms-1'>
+                                                                {item['missingFields'].join(', ')} are missing
+                                                            </p>
+                                                        )}
                                                     </div>
                                                 }
                                             </td>
@@ -311,7 +310,6 @@ const Tables = ({ headings, data, name }) => {
                                     ))}
                                 </>
                             )}
-
                         </tbody>
                     </>
                     {showTrashModal && <Trash state={true} onClose={() => setShowTrashModal(false)} texts='Remove Product' svgs={<svg xmlns="http://www.w3.org/2000/svg" width="73" height="72" viewBox="0 0 73 72" fill="none">

@@ -14,7 +14,7 @@ import NotificationSlice from '../Slices/notification-slice';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['cart', 'login', 'notification']
+  whitelist: ['cart', 'login',]
 };
 
 const reducers = combineReducers({

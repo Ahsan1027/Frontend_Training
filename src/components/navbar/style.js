@@ -12,13 +12,13 @@ const Navbar = {
         fontSize: '16px',
         fontStyle: 'normal',
         fontWeight: '700',
-        lineHeight: '24px', /* 150% */
+        lineHeight: '24px',
     },
 
     BellAdjust: {
         width: '26px',
         height: '16px',
-        marginTop: '5px',
+        marginTop: '3px',
 
         flexShrink: '0',
     },
@@ -34,16 +34,14 @@ const Navbar = {
     PopAdjust:{
         position: 'absolute',
         top: '100%',
-        // left: '0',
         right:'6%',
         zIndex: '3',
-        maxWidth: '250px',
-        maxHeight: '240px',
+        maxWidth: '350px',
+        maxHeight: '140px',
         overflow: 'auto',
         backgroundColor: 'white',
         border: '1px solid #ccc',
         padding: '10px',
-        // marginLeft:'1100px'
     },
 
     NameAdjust: {
@@ -70,7 +68,11 @@ const Navbar = {
         width: '200px',
         maxHeight: '200px',
         overflow: 'auto',
-    }
+    },
+
+    blue_icon: {
+        fill: 'blue',
+      }
 };
 
 export default Navbar;

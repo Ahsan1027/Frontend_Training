@@ -34,7 +34,7 @@ height: 130px;
 }
 
 .containerAdjust{
-    width:800px;
+    width:700px;
 }
 
 .QuantityAdjust{
@@ -51,17 +51,13 @@ height: 130px;
     font-style: normal;
     font-weight: 400;
     line-height: 21px; 
-    /* justify-content: end; */
 }
 
 
 
 .deleteAdjust{
-    /* display: flex; */
-    /* width: 16px;
-    height:30px; */
     color: var(--components-forms-input-text, #495057);
-    margin-left: 630px;
+    margin-left: 580px;
     margin-top: -60px;
     font-family: Inter;
     font-size: 14px;
@@ -70,8 +66,6 @@ height: 130px;
     line-height: 21px; 
     border:none;
     background: var(--global-09-white, #FFF);
-
-    /* justify-content: end; */
 }
 
 .width{

@@ -6,9 +6,9 @@ import { v4 as uuidv4 } from 'uuid';
 import Trash from '../trash';
 import Button from '../button';
 import { addOrder } from '../../redux/Slices/order-slice';
-import { addNotifications } from '../../redux/Slices/notification-slice';
 import { useNavigate } from 'react-router-dom';
 import { clearCart } from '../../redux/Slices/user-cart-slice';
+import { createCharges } from '../../redux/Slices/user-cart-slice';
 import SummaryWrapper from './style';
 
 const OrderSummary = ({ text1 = null, text2 = null, text3 = null, text4 = null, name = null, Active = false, show = false }) => {
@@ -18,6 +18,7 @@ const OrderSummary = ({ text1 = null, text2 = null, text3 = null, text4 = null, 
     const email = useSelector((state) => state.login.email);
     const totalWithTax = useSelector((state) => state.cart.totalWithTax);
     const productsinCart = useSelector((state) => state.cart.items);
+    const { cardId, customerId} = useSelector((state)=> state.cart);
     const username = useSelector((state) => state.login.username);
     let { token } = useSelector((state) => state.login);
     const [Payment, setPayment] = useState(false);
@@ -27,7 +28,7 @@ const OrderSummary = ({ text1 = null, text2 = null, text3 = null, text4 = null, 
     const [cardNum, setCardNum] = useState('');
     const [expiryDate, setExpiryDate] = useState('');
     const [title, setTitle] = useState('');
-    console.log('productsInCart', productsinCart);
+
 
     const placeholders = ['Card number', 'MM/YY', 'CVC', 'Enter Name'];
 
@@ -47,8 +48,8 @@ const OrderSummary = ({ text1 = null, text2 = null, text3 = null, text4 = null, 
         const status = 'Paid';
         const orderId = uuidv4();
         setPayNow(true);
-        await dispatch(addOrder({ orderId, username, products: productsinCart, email, totalAmount: totalWithTax + 100, status, token })) ;
-        dispatch(addNotifications(orderId));
+        dispatch(createCharges({totalAmount: totalWithTax + 100, cardId, customerId, email}));
+        await dispatch(addOrder({ orderId, username, products: productsinCart, email, totalAmount: totalWithTax + 100, status, token }));
         await dispatch(clearCart());
     };
 

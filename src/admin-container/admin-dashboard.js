@@ -3,8 +3,7 @@ import Rectangle from '../components/rectangle';
 import OrdersOverview from '../components/orders-overview';
 import Chart from '../components/charts';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchDashboardData, fetchDashboardStats } from '../redux/Slices/dashboard-slice';
-import { ordersReportData } from '../redux/Slices/dashboard-slice';
+import {  fetchDashboardStats } from '../redux/Slices/dashboard-slice';
 import { ProductsTableComponent } from './admin-products';
 import Styling from './auth/style';
 
@@ -19,8 +18,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     dispatch(fetchDashboardStats(token));
-    dispatch(fetchDashboardData(token));
-    dispatch(ordersReportData(token));
   }, []);
 
   return (
@@ -62,7 +59,7 @@ const Dashboard = () => {
         )}
       </div>
       <div style={Styling.custom_size} ><h5 className='mt-5 mb-3'>Top 6 Selling Products</h5>
-        <ProductsTableComponent headings={headingsFromAPI} data={productsData.products} error={error} name='dashboard' />
+        <ProductsTableComponent headings={headingsFromAPI} data={productsData} error={error} name='dashboard' />
       </div>
     </div>
   );

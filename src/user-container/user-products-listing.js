@@ -53,7 +53,7 @@ const ProductListing = ({ check = null }) => {
               setCurrentPage(1);
               setFilterText(`${min} - ${max}`);
             }}
-              names={filterText} Action1='1 - 200' Action2='200 - 800' Action3='800 - 1800' Action4='1800 - 2800' Action5='2800 - 4000' />
+              names={filterText} Action1='1 - 200' Action2='200 - 800' Action3='800 - 1800' Action4='1800 - 2800' Action5='2800 - 4000' Action6='All' />
           </div>
           <div className='d-flex '>
             <div className='fw-bold d-flex align-items-center '>Sorting:</div>

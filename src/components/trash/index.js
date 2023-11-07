@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateDeliveryStatus } from '../../redux/Slices/order-slice';
-// import { addUserNotification } from '../../redux/Slices/notification-slice';
 import Modal from 'react-bootstrap/Modal';
 import TrashWrapper from './style';
 
@@ -14,9 +13,7 @@ function Trash({ onClose = false, state = false, texts = null, svgs, Description
 
     const handleUpdateDeliveryStatus = async () => {
         try {
-            await dispatch(updateDeliveryStatus({orderId,token}));
-            // const aa = await dispatch(addUserNotification(orderId));
-            // console.log('check',aa);
+            await dispatch(updateDeliveryStatus({ orderId, token }));
             onContentChange();
         } catch (error) {
             console.error('\n\n Error', error);

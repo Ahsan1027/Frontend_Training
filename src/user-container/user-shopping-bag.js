@@ -11,6 +11,7 @@ import ListingWrapper from './style';
 const ShoppingBag = () => {
     const navigate = useNavigate();
     let cartItems = useSelector((state) => state.cart.items);
+    console.log('check items', cartItems);
     const [showTrashModal, setShowTrashModal] = useState(false);
     const [show, setShow] = useState(false);
     const totalItems = cartItems.length;
@@ -52,6 +53,8 @@ const ShoppingBag = () => {
                                     <ShoppingCart
                                         key={index}
                                         images={item.product.thumbnail}
+                                        colors={item.color}
+                                        sizes={item.size}
                                         title={item.product.title}
                                         price={item.price}
                                         quantity={item.quantity}

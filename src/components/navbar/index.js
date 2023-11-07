@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container } from 'react-bootstrap';
+import { Container, Button } from 'react-bootstrap';
 import { Nav } from 'react-bootstrap';
 import { Navbar } from 'react-bootstrap';
 import { NavDropdown } from 'react-bootstrap';
@@ -7,8 +7,8 @@ import { Col } from 'react-bootstrap';
 import { Image } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import { clearCart } from '../../redux/Slices/user-cart-slice';
-import { clearNotifications } from '../../redux/Slices/notification-slice';
-import { clearUserNotifications } from '../../redux/Slices/notification-slice';
+import { getNotifications } from '../../redux/Slices/notification-slice';
+import { markNotificationAsRead } from '../../redux/Slices/notification-slice';
 import Styling from './style';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/Slices/auth-slice';
@@ -18,33 +18,50 @@ const Navbars = ({ userName, profileImageSrc, name = null, value = null }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   let cartItems = useSelector((state) => state.cart.items);
+  let { token, email } = useSelector((state) => state.login);
   const notifications = useSelector((state) => state.notification.notifications);
-  // const userNotifications = useSelector((state) => state.notification.userNotifications);
+  const successMessage = useSelector((state) => state.notification.successMessage);
   let totalItems = cartItems.length;
 
-  const [showNotifications, setShowNotifications] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(true);
   const [showUserNotifications, setShowUserNotifications] = useState(false);
 
   useEffect(() => {
+    dispatch(getNotifications({ email, token }));
+  }, [successMessage]);
+
+  useEffect(() => {
     totalItems = totalItems + cartItems.length;
-  }, [cartItems]);
+    dispatch(getNotifications({ email, token }));
+  }, [cartItems, email]);
 
   const handleShopping = () => {
     navigate('/shopping-page');
   };
 
+  const [popoverVisible, setPopoverVisible] = useState(false);
+
   const toggleNotifications = () => {
+    setPopoverVisible(true);
     if (showNotifications) {
-      dispatch(clearNotifications());
+      dispatch(getNotifications({ email, token }));
     }
     setShowNotifications((prev) => !prev);
   };
+
   const toggleUserNotifications = () => {
+    setPopoverVisible(!popoverVisible);
     if (showUserNotifications) {
-      dispatch(clearUserNotifications());
+      dispatch(getNotifications({ email, token }));
     }
     setShowUserNotifications((prev) => !prev);
   };
+
+  const handleIconClick = (index) => {
+    const notificationId = notifications[index]._id;
+    dispatch(markNotificationAsRead({ notificationId, token }));
+  };
+
   return (
     <Navbar style={Styling.ContainerAdjust} >
       <Container>
@@ -95,10 +112,19 @@ const Navbars = ({ userName, profileImageSrc, name = null, value = null }) => {
                       </defs>
                     </svg>{notifications.length > 0 && <span className="">{notifications.length}</span>}</div></Nav>
                     <div className=''>
-                      {showUserNotifications && notifications.length > 0 && (
-                        <div style={Styling.notification_list} className='mt-5 border small'>
-                          {notifications.map((orderId, index) => (
-                            <div key={index} className='mt-2'>Order Sent: {orderId}</div>
+                      {showNotifications && notifications.length > 0 && popoverVisible && (
+                        <div
+                          className='small'
+                          style={Styling.PopAdjust}
+                        >
+                          {notifications.map((item, index) => (
+                            <>
+                              <div className='d-flex '>
+                                <div key={index} className='mt-2'>Order Delivered: {item.orderId}</div>
+                                <Button className='small d-flex border border-primary mt-2 ps-1' onClick={() => handleIconClick(index)} >
+                                  Mark as Read</Button>
+                              </div>
+                            </>
                           ))}
                         </div>
                       )}
@@ -143,10 +169,19 @@ const Navbars = ({ userName, profileImageSrc, name = null, value = null }) => {
                   </svg>{notifications.length > 0 && <span className="">{notifications.length}</span>}
                 </div></Nav>
                 <div className=''>
-                  {showNotifications && notifications.length > 0 && (
-                    <div style={Styling.notification_list} className='mt-5 border small'>
-                      {notifications.map((orderId, index) => (
-                        <div key={index} className='mt-2'>New Order: {orderId}</div>
+                  {showNotifications && notifications.length > 0 && popoverVisible && (
+                    <div
+                      className='small'
+                      style={Styling.PopAdjust}
+                    >
+                      {notifications.map((item, index) => (
+                        <>
+                          <div className='d-flex '>
+                            <div key={index} className='mt-2'>Order Sent: {item.orderId}</div>
+                            <Button className='small d-flex border border-primary mt-2 ps-1' onClick={() => handleIconClick(index)} >
+                              Mark as Read</Button>
+                          </div>
+                        </>
                       ))}
                     </div>
                   )}

@@ -25,7 +25,7 @@ function OffCanvasExample({
     clickedIndex = null,
     ...props
 }) {
-    const { id, token } = useSelector((state) => state.login);
+    const { id, token, username, email } = useSelector((state) => state.login);
     const { error } = useSelector((state) => state.fetch);
     let ordersData = useSelector((state) => state.order.productsData.orders);
     const selectedfileRef = useRef(null);
@@ -42,6 +42,7 @@ function OffCanvasExample({
     const [address, setAddress] = useState('');
     const [cardNum, setCardNum] = useState('');
     const [expiryDate, setExpiryDate] = useState('');
+    const [CVC, setCVC] = useState('');
     const [title, setTitle] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
     const [remainingFiles, setRemainingFiles] = useState([]);
@@ -224,12 +225,19 @@ function OffCanvasExample({
             return;
         }
         setIsEmptyFields(false);
-        const payments = {
-            cardNum: cardNum,
-            expiryDate: expiryDate,
-            title: title,
-        };
-        await dispatch(addPayment({ id, payments: [payments], token }));
+        const dateParts = expiryDate.split('/');
+
+        const expMonth = parseInt(dateParts[0], 10);
+        const expYear = parseInt(dateParts[1], 10);
+        console.log('check month and year', expMonth, expYear);
+        // const paymentData = {
+        //     cardNum: cardNum,
+        //     month,
+        //     year,
+        //     CVC: CVC,
+        //     title: title,
+        // };
+        await dispatch(addPayment({ name: username, cardNum, expMonth, expYear, CVC, title, email, token }));
         onClose(true, cardNum, expiryDate, title);
     };
 
@@ -360,11 +368,13 @@ function OffCanvasExample({
                                 const rating = ratingRef.current.value;
                                 const isAddProduct = Name === 'Add Product';
 
-                                if (isAddProduct && (!productName || !price || !stock || !rating)) {
+                                if (isAddProduct && (!productName || !price || !stock || !rating || !selectedSizes.length || !selectedColors.length)) {
                                     setError(true);
+                                    console.log('check error', productName, price, stock, rating, selectedSizes, selectedColors);
                                     alert('Fill all Empty Fields!');
                                     return;
                                 }
+                                console.log('check values ', productName, price, stock, rating, selectedSizes, selectedColors);
                                 handleClose(productName, price, stock, rating, selectedSizes, selectedColors);
                             }} className={`mt-5 custom-button ${Name === 'Add Product' && checksError ? 'disable-button' : ''}`}
                                 disabled={false}
@@ -633,6 +643,19 @@ function OffCanvasExample({
                                                 placeholder={placeholders[1]}
                                                 value={expiryDate}
                                                 onChange={(e) => setExpiryDate(e.target.value)}
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col >
+                                            <Form.Label className='mt-4'>
+                                                CVC
+                                            </Form.Label>
+                                            <Input
+                                                type="text"
+                                                placeholder={placeholders[2]}
+                                                value={CVC}
+                                                onChange={(e) => setCVC(e.target.value)}
                                             />
                                         </Col>
                                     </Row>

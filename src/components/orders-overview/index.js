@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ordersOverviewData } from '../../redux/Slices/dashboard-slice';
+import { fetchDashboardStats } from '../../redux/Slices/dashboard-slice';
 import OrdersOverViewWrapper from './style';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 
@@ -10,7 +10,7 @@ const OrdersOverview = () => {
     const { totalUnsold } = useSelector((state) => state.dashboard);
     let { token } = useSelector((state) => state.login);
     useEffect(() => {
-        dispatch(ordersOverviewData(token));
+        dispatch(fetchDashboardStats(token));
     }, [totalSold, totalUnsold]);
 
     const data = [
