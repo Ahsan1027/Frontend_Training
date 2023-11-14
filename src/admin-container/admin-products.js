@@ -90,21 +90,15 @@ const AdminProducts = () => {
 
   useEffect(() => {
     dispatch(fetchProductsData({
-      // currentPage,
       token,
       limit,
-      skip: (5 * (currentPage - 1))
+      skip: (limit * (currentPage - 1))
     }));
   }, [currentPage, addSuccess, deleteSuccess, editSuccess]);
-
-  const skip = limit + (5 * (currentPage - 1));
-
-  console.log('check details in admin prod', currentPage, skip);
 
   const handleSearch = () => {
     const query = searchQuery.toLowerCase();
     dispatch(fetchProductsData({
-      // currentPage: 1,
       limit,
       skip: 0,
       title: query,
