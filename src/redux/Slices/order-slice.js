@@ -32,10 +32,22 @@ export const addOrder = createAsyncThunk(
     products,
     email,
     totalAmount,
+    cardId,
+    customerId,
     status,
     token }, thunkAPI) => {
     try {
-      const response = await axios.post('http://localhost:4000/api/order/add-order', { date, orderId, username, products, email, totalAmount, status }, {
+      const response = await axios.post('http://localhost:4000/api/order/add-order', {
+        date,
+        orderId,
+        username,
+        products,
+        email,
+        totalAmount,
+        status,
+        cardId,
+        customerId,
+      }, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -174,8 +186,9 @@ const OrderSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(addOrder.fulfilled, (state) => {
+      .addCase(addOrder.fulfilled, (state, action) => {
         state.loading = false;
+        console.log('check order action payload',action.payload);
         state.error = null;
       })
       .addCase(addOrder.rejected, (state, action) => {
@@ -222,17 +235,17 @@ const OrderSlice = createSlice({
       .addCase(updateDeliveryStatus.pending, (state) => {
         state.loading = true;
         state.orderDeliverSuccess = false,
-        state.error = null;
+          state.error = null;
       })
       .addCase(updateDeliveryStatus.fulfilled, (state, action) => {
         state.productsData = action.payload;
         state.orderDeliverSuccess = true,
-        state.loading = false;
+          state.loading = false;
       })
       .addCase(updateDeliveryStatus.rejected, (state, action) => {
         state.loading = false;
         state.orderDeliverSuccess = false,
-        state.error = action.payload;
+          state.error = action.payload;
       });
   },
 });

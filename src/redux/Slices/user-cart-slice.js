@@ -9,7 +9,7 @@ export const addAddress = createAsyncThunk(
     token },
     thunkAPI) => {
     try {
-      const response = await axios.post('http://localhost:4000/api/cart/add-address', {
+      const response = await axios.post('http://localhost:4000/api/cartAddress/add-address', {
         id,
         addresses,
       },
@@ -29,73 +29,11 @@ export const getAddress = createAsyncThunk(
   'cart/getAddress',
   async ({ id, token }, thunkAPI) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/cart/get-address?id=${id}`, {
+      const response = await axios.get(`http://localhost:4000/api/cartAddress/get-address?id=${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
       });
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const addPayment = createAsyncThunk(
-  'cart/addPayment',
-  async ({
-    name,
-    email,
-    cardNum,
-    expMonth,
-    expYear,
-    CVC,
-    title,
-    token },
-    thunkAPI) => {
-    try {
-      const response = await axios.post('http://localhost:4000/api/cart/create-customer', {
-        name,
-        email,
-        cardNum,
-        expMonth,
-        expYear,
-        CVC,
-        title,
-      },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const createCharges = createAsyncThunk(
-  'cart/createCharges',
-  async ({
-    email,
-    cardId,
-    customerId,
-    totalAmount,
-    token },
-    thunkAPI) => {
-    try {
-      const response = await axios.post('http://localhost:4000/api/cart/create-charges', {
-        email,
-        cardId,
-        customerId,
-        totalAmount,
-      },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -110,10 +48,9 @@ const initialState = {
   tax: 0.05,
   error: null,
   orderSuccess: false,
+  addressSuccess: false,
   status: 'idle',
   addresses: [],
-  cardId: '',
-  customerId: '',
   loading: false,
 };
 
@@ -223,28 +160,18 @@ const cartSlice = createSlice({
       })
       .addCase(getAddress.pending, (state) => {
         state.loading = true;
-        state.error = null;
+        state.addressSuccess = false;
       })
       .addCase(getAddress.fulfilled, (state, action) => {
         state.addresses = action.payload.addresses;
         state.loading = false;
+        state.addressSuccess = true;
+        state.error = null;
       })
       .addCase(getAddress.rejected, (state, action) => {
-        state.error = action.payload;
+        state.error = action.payload.message;
+        state.addresses = [];
         state.loading = false;
-      })
-      .addCase(addPayment.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(addPayment.fulfilled, (state,action) => {
-        state.status = 'Paid';
-        state.cardId = action.payload.card;
-        state.customerId = action.payload.customer_Id;
-
-      })
-      .addCase(addPayment.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
       });
   },
 });

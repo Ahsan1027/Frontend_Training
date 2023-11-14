@@ -167,7 +167,7 @@ const Fixeddiv = ({ check = null, Index = 0 }) => {
                                         <div className='ms-3 mt-3'>
                                             <div className='d-flex'>
                                                 <div className=''>Price:</div>
-                                                <div className='ms-3 fw-bold text-primary'>Rs {productsData?.products[newIndex].price}</div>
+                                                <div className='ms-3 fw-bold text-primary'>${productsData?.products[newIndex].price}</div>
                                             </div>
                                         </div>
                                     </>

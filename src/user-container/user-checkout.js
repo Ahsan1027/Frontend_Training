@@ -28,12 +28,11 @@ const Checkout = () => {
     const [clickedIndex, setClickedIndex] = useState(0);
     const placeholders = ['Full name', 'Mobile #', 'Country', 'Province', 'City', 'Address', '100'];
 
-    const handleGetAddressClick = () => {
-        dispatch(getAddress({ id, token }));
+    const handleGetAddressClick = async () => {
+        await dispatch(getAddress({ id, token }));
         setClickedIndex(clickedIndex);
         setAddress(true);
     };
-
 
     if (cartItems.length === 0 && !orderSuccess) {
         alert('Cart is Empty');
@@ -83,10 +82,24 @@ const Checkout = () => {
                                 </>
                             ) : (
                                 <>
-                                    <div className='UpperDiv border mt-4 py-2  back'>
-                                        <Buttons onClick={() => setDetails(true)} className='ms-2'>Add Delivery Address</Buttons>
-                                    </div>
+                                    {addresses.length !== 0 && (
+                                        <>
+                                            {setName(addresses[0]?.name)}
+                                            {setMobile(addresses[0]?.mobile)}
+                                            {setAddress1(addresses[0]?.address)}
+                                            {setOpen(true)}
+                                            {setActive(true)}
+                                        </>
+                                    )}
+                                    {addresses.length == 0 && (
+                                        <div className='UpperDiv border mt-4 py-2 back'>
+                                            <Buttons onClick={() => setDetails(true)} className='ms-2'>
+                                                Add Delivery Address
+                                            </Buttons>
+                                        </div>
+                                    )}
                                 </>
+
                             )}
                             {cartItems.map((item, index) => {
                                 return (
@@ -137,7 +150,7 @@ const Checkout = () => {
                     placeholders={placeholders}
                     name='Choose Address'
                     addresses={addresses}
-                    clickedIndex = {clickedIndex}
+                    clickedIndex={clickedIndex}
                     text='Confirm'
                     onClose={(value, fullName, mobile, address, selectedUserIndex) => {
                         setClickedIndex(selectedUserIndex);

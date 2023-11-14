@@ -19,6 +19,7 @@ export const loginUser = createAsyncThunk(
 				username: response.data.username,
 				email: response.data.email,
 				role: response.data.role,
+				customerId: response.data.stripeId,
 			};
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response.data);
@@ -114,6 +115,10 @@ const LoginSlice = createSlice({
 			state.username = null;
 			state.error = null;
 			state.role = null;
+		},
+		updateCustomerId: (state, action) => {
+			const { custId } = action.payload;
+			state.customerId = custId;
 		}
 	},
 
@@ -125,11 +130,13 @@ const LoginSlice = createSlice({
 			})
 			.addCase(loginUser.fulfilled, (state, action) => {
 				state.loading = false;
+				console.log('check action payload of login', action.payload);
 				state.token = action.payload.token;
 				state.id = action.payload.id;
 				state.username = action.payload.username;
 				state.email = action.payload.email;
 				state.role = action.payload.role;
+				state.customerId = action.payload.customerId;
 				state.error = null;
 			})
 			.addCase(loginUser.rejected, (state, action) => {
@@ -177,4 +184,4 @@ const LoginSlice = createSlice({
 });
 
 export default LoginSlice.reducer;
-export const { logout } = LoginSlice.actions;
+export const { logout, updateCustomerId } = LoginSlice.actions;

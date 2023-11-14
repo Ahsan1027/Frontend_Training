@@ -212,12 +212,15 @@ border: 1px solid var(--components-image-border, #DEE2E6);
 
 .payment-size3{
     height: 150px;
-    /* margin-right: 60px; */
     width: 275px;
 }
 
 .blue-border {
   border: 2px solid blue;
+}
+
+.selected-card {
+  border: 2px solid #007BFF;
 }
 
 `;

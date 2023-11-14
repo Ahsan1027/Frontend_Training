@@ -7,39 +7,53 @@ import Fixeddiv from '../components/fixed-div';
 import Sidediv from '../components/side-div';
 import Dropdowns from '../components/dropdown';
 import Button from '../components/button';
-import { PaginationComponent } from '../admin-container/admin-products';
 import { fetchProductsData } from '../redux/Slices/products-slice';
 import ListingWrapper from './style';
 
 const ProductListing = ({ check = null }) => {
   const dispatch = useDispatch();
   let { productsData, loading, error } = useSelector((state) => state.fetch);
-  const itemsPerPage = 5;
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [sortOrder, setSortOrder] = useState('asc');
   const [Index, setIndex] = useState(0);
   const [filterText, setFilterText] = useState('Price');
   const [sortText, setSortText] = useState('Default Sorting(Asc)');
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  const limit = 5;
 
   const handleSearch = () => {
     const query = searchQuery.toLowerCase();
     dispatch(fetchProductsData({
-      currentPage: 1,
+      currentPage,
       title: query,
+      limit,
+      skip: 0,
     }));
+  };
+
+
+  window.onscroll = function () {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+      if (productsData?.products?.length < productsData.total) {
+        setCurrentPage(currentPage + 1);
+      }
+    }
   };
 
   useEffect(() => {
     const sortField = 'price';
-    dispatch(fetchProductsData({ currentPage, minPrice, maxPrice, sortField, sortOrder }));
-  }, [currentPage, minPrice, maxPrice, sortOrder]);
+    dispatch(fetchProductsData({
+      currentPage,
+      minPrice,
+      maxPrice,
+      sortField,
+      sortOrder,
+      limit: limit + (limit * (currentPage - 1)),
+      skip: 0
+    }));
+  }, [minPrice, maxPrice, sortOrder, currentPage]);
 
   return (
     <>
@@ -50,7 +64,7 @@ const ProductListing = ({ check = null }) => {
             <div className='fw-bold d-flex align-items-center me-3 ms-5'>Filters:</div>
             <Dropdowns onPriceChange={(min, max) => {
               setMaxPrice(max); setMinPrice(min);
-              setCurrentPage(1);
+              // setCurrentPage(1);
               setFilterText(`${min} - ${max}`);
             }}
               names={filterText} Action1='1 - 200' Action2='200 - 800' Action3='800 - 1800' Action4='1800 - 2800' Action5='2800 - 4000' Action6='All' />
@@ -83,45 +97,53 @@ const ProductListing = ({ check = null }) => {
         </div>
 
 
-        {error ? (
+        {error && (
           <div className="error-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
             <div className="text-danger">
               <div>Error: {error} </div>
             </div>
           </div>
-        ) : loading ? (
+        )
+        }
+        {loading && (
           <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255, 255, 255, 0.7)' }}>
             <div className="loading-overlay text-center">
               <Spinner animation="border" role="status"></Spinner>
               <div>Loading...</div>
             </div>
           </div>
-        ) : (
-          <>
-            <Container className='ms-5 '>
-              <Row >
-                <div className='d-flex mt-5' >
-                  <Col className='scrolling custom-size' lg={6}>
-                    <div className="d-flex flex-wrap">
-                      <Sidediv
-                        data={productsData.products}
-                        newIndex={(value) => {
-                          setIndex(value);
-                        }} />
-                    </div>
-                    <PaginationComponent currentPage={currentPage} totalPages={productsData.total} onPageChange={handlePageChange} itemsPerPage={itemsPerPage} />
-                  </Col>
-                  <Col className='ms-3 custom-size1'>
-                    <Fixeddiv
-                      check={check}
-                      Index={Index}
-                    />
-                  </Col>
-                </div>
-              </Row>
-            </Container>
-          </>
         )}
+        {/* {!error && !loading && ( */}
+        <>
+          <Container className='ms-5 '>
+            <Row >
+              <div className='d-flex mt-5' >
+                <Col className='scrolling custom-size' lg={6}>
+                  <div className="d-flex flex-wrap">
+                    {
+                      productsData?.products?.map((pro, index) => (
+                        <Sidediv
+                          key={pro?._id}
+                          data={pro}
+                          index={index}
+                          newIndex={(value) => {
+                            setIndex(value);
+                          }} />
+                      ))
+                    }
+                  </div>
+                </Col>
+                <Col className='ms-3 custom-size1'>
+                  <Fixeddiv
+                    check={check}
+                    Index={Index}
+                  />
+                </Col>
+              </div>
+            </Row>
+          </Container>
+        </>
+        {/* )} */}
       </ListingWrapper>
     </>
   );

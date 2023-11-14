@@ -177,7 +177,7 @@ const Navbars = ({ userName, profileImageSrc, name = null, value = null }) => {
                       {notifications.map((item, index) => (
                         <>
                           <div className='d-flex '>
-                            <div key={index} className='mt-2'>Order Sent: {item.orderId}</div>
+                            <div key={index} className='mt-2'>New Order: {item.orderId}</div>
                             <Button className='small d-flex border border-primary mt-2 ps-1' onClick={() => handleIconClick(index)} >
                               Mark as Read</Button>
                           </div>

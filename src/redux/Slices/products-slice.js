@@ -4,15 +4,17 @@ import axios from 'axios';
 export const fetchProductsData = createAsyncThunk(
   'fetch/fetchProductsData',
   async ({
-    currentPage,
     minPrice = 0,
     maxPrice = 0,
     sortField = '',
     sortOrder = '',
-    title = ''
+    limit,
+    skip,
+    title = '',
   }, thunkAPI) => {
+    console.log('check limit and skip in slice', limit, skip);
     try {
-      const response = await axios.get(`http://localhost:4000/api/prod/get-prod?limit=5&skip=${(currentPage - 1) * 5}&minPrice=${minPrice}&maxPrice=${maxPrice}&sortField=${sortField}&sortOrder=${sortOrder}&title=${title}`);
+      const response = await axios.get(`http://localhost:4000/api/prod/get-prod?limit=${limit}&skip=${skip}&minPrice=${minPrice}&maxPrice=${maxPrice}&sortField=${sortField}&sortOrder=${sortOrder}&title=${title}`);
       const productsData = response.data;
       return productsData;
     } catch (error) {
@@ -90,8 +92,6 @@ export const editProduct = createAsyncThunk(
         selectedColors,
         token } = data;
 
-      console.log('check in slice', selectedSizes, selectedColors);
-
       const updateFields = {};
       if (title !== '') {
         updateFields.title = title;
@@ -141,6 +141,8 @@ const FetchSlice = createSlice({
   name: 'fetch',
   initialState: {
     productsData: [],
+    userProductsData: [],
+    total: '',
     fileErrors: [],
     fileData: '',
     fileError: '',
@@ -162,14 +164,17 @@ const FetchSlice = createSlice({
       })
       .addCase(fetchProductsData.fulfilled, (state, action) => {
         state.loading = false;
-        console.log('check action payload', action.payload);
         state.productsData = action.payload;
+        state.userProductsData = [...state.userProductsData, ...action.payload.products];
+        state.total = action.payload.total;
+        console.log('in slice', state.productsData);
         state.orderSuccess = false;
         state.error = null;
       })
       .addCase(fetchProductsData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.productsData = [];
       })
       .addCase(addProduct.pending, (state) => {
         state.loading = true;
@@ -191,12 +196,10 @@ const FetchSlice = createSlice({
       })
       .addCase(importBulkProduct.fulfilled, (state, action) => {
         state.loading = false;
-        console.log('check slice data', action.payload);
         state.productsData?.products?.push(action.payload.productsData);
         state.fileData = action.payload.productsData.length;
         state.fileError = action.payload.total;
         state.fileName = action.payload.filename;
-        // state.rowError = action.payload.rowIndex;
         state.fileErrors = action.payload.errorRows;
         state.addSuccess = true,
           state.error = null;
@@ -256,6 +259,5 @@ const FetchSlice = createSlice({
       });
   },
 });
-
 
 export default FetchSlice.reducer;
