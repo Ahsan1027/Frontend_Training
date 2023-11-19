@@ -22,7 +22,7 @@ const Sidediv = ({ data, newIndex, index }) => {
               <span >Price:</span>
               <span className='ms-2 text-primary'>${data.price}</span>
               {data?.stock === 0 ? (
-                <Button className='d-flex ms-auto btn btn-secondary' disabled>Out of Stock</Button>
+                <Button className='d-flex ms-auto btn btn-danger' disabled>Out of Stock</Button>
               ) : (
                 <Button onClick={() => changeIndex(index)} className='d-flex ms-auto'>Details</Button>
               )}

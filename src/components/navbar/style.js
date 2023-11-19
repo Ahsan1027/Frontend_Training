@@ -37,7 +37,7 @@ const Navbar = {
         right:'6%',
         zIndex: '3',
         maxWidth: '350px',
-        maxHeight: '140px',
+        maxHeight: '340px',
         overflow: 'auto',
         backgroundColor: 'white',
         border: '1px solid #ccc',
@@ -66,7 +66,7 @@ const Navbar = {
 
     notification_list:{
         width: '200px',
-        maxHeight: '200px',
+        maxHeight: '400px',
         overflow: 'auto',
     },
 

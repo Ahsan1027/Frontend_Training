@@ -18,7 +18,7 @@ const Navbars = ({ userName, profileImageSrc, name = null, value = null }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   let cartItems = useSelector((state) => state.cart.items);
-  let { token, email } = useSelector((state) => state.login);
+  let { token, email, role } = useSelector((state) => state.login);
   const notifications = useSelector((state) => state.notification.notifications);
   const successMessage = useSelector((state) => state.notification.successMessage);
   let totalItems = cartItems.length;
@@ -62,13 +62,25 @@ const Navbars = ({ userName, profileImageSrc, name = null, value = null }) => {
     dispatch(markNotificationAsRead({ notificationId, token }));
   };
 
+  const homePage = () => {
+    {
+      role == 'user' && (
+        navigate('/')
+      );
+    }
+    {
+      role == 'admin' && (
+        navigate('/dashboard-page')
+      );
+    }
+  };
+
   return (
     <Navbar style={Styling.ContainerAdjust} >
       <Container>
-        <Navbar.Brand href="#home" style={Styling.EcommAdjust}>E-commerce</Navbar.Brand>
+        <div href="#home" onClick={homePage} role='button' style={Styling.EcommAdjust}>E-commerce</div>
         <Navbar.Collapse className="justify-content-end">
           <Nav>
-
             {name === 'User' ? (
               <>
                 {value === 'invalid' ? (

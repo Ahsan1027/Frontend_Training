@@ -9,6 +9,7 @@ import ButtonStyle from '../components/button/style';
 import Edit from '../components/drawer';
 import Button from '../components/button';
 import Styling from './auth/style';
+import _debounce from 'lodash/debounce';
 import Paginations from '../components/pagination';
 import { fetchProductsData, addProduct } from '../redux/Slices/products-slice';
 import Modal from '../components/modal';
@@ -50,18 +51,18 @@ const AdminProducts = () => {
   const headingsFromFile = ['Row', 'MissingFields'];
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
+  // const [searchQuery, setSearchQuery] = useState('');
   const [add, setAdd] = useState(false);
   const [Cross, setCross] = useState(false);
   const [Status, setStatus] = useState(false);
   const [FileError, setFileError] = useState(false);
   const [Bulk, setBulk] = useState(false);
   const placeholders = ['Add Product Name', 'Quantity'];
+  // const [searchTitle, setTitle ] = useState('');
   const limit = 5;
 
   const dispatch = useDispatch();
   let { productsData, loading, error, addSuccess, deleteSuccess, editSuccess, fileName, fileData, fileError, fileErrors } = useSelector((state) => state.fetch);
-  console.log('check filedata', fileData);
   let { token } = useSelector((state) => state.login);
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -82,7 +83,7 @@ const AdminProducts = () => {
       };
       await dispatch(addProduct(editedProduct));
     } catch (error) {
-      console.error('\n\n Error Editing Product:', error);
+      console.error('\n\n', 'Error Editing Product:', error);
     } finally {
       setAdd(false);
     }
@@ -90,21 +91,28 @@ const AdminProducts = () => {
 
   useEffect(() => {
     dispatch(fetchProductsData({
+      // title: searchQuery,
       token,
       limit,
       skip: (limit * (currentPage - 1))
     }));
   }, [currentPage, addSuccess, deleteSuccess, editSuccess]);
 
-  const handleSearch = () => {
-    const query = searchQuery.toLowerCase();
+  const debouncedFetchData = ((query) => {
     dispatch(fetchProductsData({
       limit,
       skip: 0,
       title: query,
       token,
     }));
-  };
+  });
+
+
+  const handleSearch = _debounce((e) => {
+    const query = e.target.value.toLowerCase();
+    // setSearchQuery(query);
+    debouncedFetchData(query);
+  }, 500);
 
   return (
     <div className='mt-4 '>
@@ -156,18 +164,18 @@ const AdminProducts = () => {
             <h4 style={Styling.ProductHeadingAdjust} className='mt-2'>Products</h4>
             <div>
               <Row style={{ marginLeft: '370px' }} >
-                <Col xs="auto">
+                {/* <Col xs="auto">
                   <Button variant="outline-primary" id="button-addon2" onClick={handleSearch} >
                     Search
                   </Button>
-                </Col>
+                </Col> */}
                 <Col xs="auto" className="mt-2">
                   <input
                     type="text"
-                    placeholder="Search"
+                    placeholder="Search by Title"
                     className="mr-2 border-black"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    // value={searchQuery}
+                    onChange={(e) => handleSearch(e)}
                   />
                 </Col>
               </Row>

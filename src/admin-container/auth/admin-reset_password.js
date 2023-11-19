@@ -18,7 +18,6 @@ import { forgotUser } from '../../redux/Slices/auth-slice';
 const Reset = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    // let { error } = useSelector((state) => state.login);
     const [email, setEmail] = useState('');
     const [EmailError, setEmailError] = useState('');
     const [validationError, setError] = useState('');
@@ -28,19 +27,22 @@ const Reset = () => {
         e.preventDefault();
 
         if (!mailformat.test(email)) {
+            setError(true);
             setEmailError('Invalid email format');
             return;
         }
-
         setEmailError('');
-        const { error } = await dispatch(forgotUser({ email }));
+        const error  = await dispatch(forgotUser({ email }));
 
-        if (error) {
+        if (error?.payload == 'User not found') {
+            setEmailError(error?.payload);
             navigate('/reset-password');
             setError(true);
+            // return;
         } else {
             setError(false);
             alert('Email Sent Successfully');
+            // return;
         }
     };
 
@@ -66,12 +68,12 @@ const Reset = () => {
                             placeholder="Please enter your email"
                         />
 
-                        {EmailError ? (
+                        {/* {EmailError ? (
                             <div className="text-danger">{EmailError}</div>
-                        ) : null}
+                        ) : null} */}
 
                         {validationError &&
-                            <div className="text-danger small">User Not Found
+                            <div className="text-danger small">{EmailError}
                             </div>}
                     </Form.Group>
 

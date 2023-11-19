@@ -39,12 +39,14 @@ const Signup = () => {
             setPasswordError('Password must be at least 8 characters long and must contain special characters.');
             return;
         }
-        const { error } = await dispatch(SignupUser({ name, email, password, mobile }));
-        if (error) {
+        const  error  = await dispatch(SignupUser({ name, email, password, mobile }));
+        if (error?.payload == 'Email already in use') {
+            setEmailError(error.payload);
             navigate('/Signup');
             setError(true);
         } else {
             setError(false);
+            alert(`Welcome ${name}`);
             navigate('/login');
         }
     };
@@ -116,9 +118,9 @@ const Signup = () => {
                                     placeholder="Please enter your email"
                                 />
                             </Form.Group>
-                            {EmailError ? (
+                            {/* {EmailError ? (
                                 <div className="text-danger">{EmailError}</div>
-                            ) : null}
+                            ) : null} */}
                             <Form.Group className="mb-3">
                                 <Form.Label style={InputStyle.TextSize}>
                                     Password
@@ -148,7 +150,7 @@ const Signup = () => {
                                 />
                             </Form.Group>
                             {validationError &&
-                                <div className="text-danger small">User already Exists
+                                <div className="text-danger">{EmailError}
                                 </div>}
                             <Form.Group>
                                 <Button type="submit" className='ms-4 ' style={ButtonStyle.SignupAdjust} >

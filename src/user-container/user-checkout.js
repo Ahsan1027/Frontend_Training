@@ -14,7 +14,7 @@ const Checkout = () => {
     const dispatch = useDispatch();
     const addresses = useSelector(state => state.cart.addresses);
     let cartItems = useSelector((state) => state.cart.items);
-    let { orderSuccess } = useSelector((state) => state.cart);
+    // let { orderSuccess } = useSelector((state) => state.cart);
     const { id, token } = useSelector((state) => state.login);
     const totalItems = cartItems.length;
     const [Details, setDetails] = useState(false);
@@ -34,9 +34,9 @@ const Checkout = () => {
         setAddress(true);
     };
 
-    if (cartItems.length === 0 && !orderSuccess) {
-        alert('Cart is Empty');
-    }
+    // if (cartItems.length == 0 && !orderSuccess) {
+    //     alert('Cart is Empty!!');
+    // }
 
     const backPage = () => {
         navigate('/shopping-page');

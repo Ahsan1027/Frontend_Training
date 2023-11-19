@@ -15,8 +15,6 @@ const Tables = ({ headings, data, name }) => {
     const dispatch = useDispatch();
 
     let { token } = useSelector((state) => state.login);
-    console.log('check orderdata', data);
-
     const [showTrashModal, setShowTrashModal] = useState(false);
     const [Delivered, setDelivered] = useState(false);
     const [Confirm, setConfirm] = useState(false);
@@ -45,6 +43,7 @@ const Tables = ({ headings, data, name }) => {
 
     const deleteProductHandler = async (productId) => {
         try {
+            console.log('check prod id to delete', productId);
             await dispatch(deleteProduct({ productId, token }));
         } catch (error) {
             console.error('\n\n Error Deleting Product:', error);
@@ -60,6 +59,10 @@ const Tables = ({ headings, data, name }) => {
 
     const editProductHandler = async (thumbnail, title, price, stock, rating, selectedSizes, selectedColors, editedProductData) => {
         try {
+            if (isNaN(price) || isNaN(stock) || isNaN(rating)) {
+                alert('Must be a number !');
+                return;
+            }
             const editedProduct = {
                 editedProductData,
                 title,

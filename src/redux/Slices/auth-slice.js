@@ -98,6 +98,26 @@ export const newPassword = createAsyncThunk(
 	}
 );
 
+export const verifyUser = createAsyncThunk(
+	'login/verifyUser',
+	async (data, thunkAPI) => {
+		try {
+			const {
+				token
+			} = data;
+			const response = await axios.put('http://localhost:4000/api/auth/user-verifying', {},
+				{
+					headers: {
+						'Authorization': `Bearer ${token}`,
+					},
+				});
+			return response.data;
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error.response.data.message);
+		}
+	}
+);
+
 const LoginSlice = createSlice({
 	name: 'logins',
 	initialState: {
@@ -130,7 +150,6 @@ const LoginSlice = createSlice({
 			})
 			.addCase(loginUser.fulfilled, (state, action) => {
 				state.loading = false;
-				console.log('check action payload of login', action.payload);
 				state.token = action.payload.token;
 				state.id = action.payload.id;
 				state.username = action.payload.username;
@@ -153,7 +172,7 @@ const LoginSlice = createSlice({
 			})
 			.addCase(SignupUser.rejected, (state, action) => {
 				state.loading = false;
-				state.error = action.payload;
+				state.error = action.payload.message;
 			})
 			.addCase(forgotUser.pending, (state) => {
 				state.loading = true;
@@ -168,6 +187,22 @@ const LoginSlice = createSlice({
 				state.loading = false;
 				state.error = action.payload;
 			})
+			.addCase(verifyUser.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+				state.isVerified = null;
+			})
+			.addCase(verifyUser.fulfilled, (state, action) => {
+				state.loading = false;
+				console.log('check isVerfiied',action.payload);
+				state.isVerified = action.payload.message;
+				state.error = null;
+			})
+			.addCase(verifyUser.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload.message;
+				state.isVerified = null;
+			})
 			.addCase(newPassword.pending, (state) => {
 				state.loading = true;
 				state.error = null;
@@ -178,7 +213,7 @@ const LoginSlice = createSlice({
 			})
 			.addCase(newPassword.rejected, (state, action) => {
 				state.loading = false;
-				state.error = action.payload;
+				state.error = action.payload.message;
 			});
 	},
 });

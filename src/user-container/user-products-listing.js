@@ -6,14 +6,15 @@ import { Spinner } from 'react-bootstrap';
 import Fixeddiv from '../components/fixed-div';
 import Sidediv from '../components/side-div';
 import Dropdowns from '../components/dropdown';
-import Button from '../components/button';
+import _debounce from 'lodash/debounce';
+// import Button from '../components/button';
 import { fetchProductsData } from '../redux/Slices/products-slice';
 import ListingWrapper from './style';
 
 const ProductListing = ({ check = null }) => {
   const dispatch = useDispatch();
   let { productsData, loading, error } = useSelector((state) => state.fetch);
-  const [searchQuery, setSearchQuery] = useState('');
+  // const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
@@ -21,18 +22,29 @@ const ProductListing = ({ check = null }) => {
   const [Index, setIndex] = useState(0);
   const [filterText, setFilterText] = useState('Price');
   const [sortText, setSortText] = useState('Default Sorting(Asc)');
+  const [searchTitle, setTitle] = useState('');
   const limit = 5;
 
-  const handleSearch = () => {
-    const query = searchQuery.toLowerCase();
+  const handleSearch = _debounce((e) => {
+    const query = e.target.value.toLowerCase();
+    // setSearchQuery(query);
+    setTitle(query);
+    debouncedFetchData(query);
+  }, 500);
+
+  const debouncedFetchData = (query) => {
+    const sortField = 'price';
     dispatch(fetchProductsData({
       currentPage,
       title: query,
       limit,
       skip: 0,
+      minPrice,
+      maxPrice,
+      sortOrder,
+      sortField
     }));
   };
-
 
   window.onscroll = function () {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
@@ -45,6 +57,7 @@ const ProductListing = ({ check = null }) => {
   useEffect(() => {
     const sortField = 'price';
     dispatch(fetchProductsData({
+      title: searchTitle,
       currentPage,
       minPrice,
       maxPrice,
@@ -74,22 +87,22 @@ const ProductListing = ({ check = null }) => {
             <Dropdowns onSelect={(value) => {
               setSortOrder(value);
               setSortText(value === 'asc' ? 'Asc' : 'Desc');
-            }} names={sortText} Action1='Asc' Action2='Desc' />
+            }} names={sortText} Action7='Asc' Action8='Desc' />
           </div>
           <Col xs="auto" className="mb-3 mt-4">
             <Row className="align-items-center">
               <Col xs="auto">
-                <Button onClick={handleSearch} variant="outline-primary" id="button-addon2" >
+                {/* <Button onClick={handleSearch} variant="outline-primary" id="button-addon2" >
                   Search
-                </Button>
+                </Button> */}
               </Col>
               <Col xs="auto">
                 <input
                   type="text"
                   placeholder="Search by name"
                   className="border mw-100 fs-6 me-5"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  // value={searchQuery}
+                  onChange={(e) => handleSearch(e)}
                 />
               </Col>
             </Row>

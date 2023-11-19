@@ -10,14 +10,12 @@ import InputStyle from '../../components/input/style';
 import Styling from './style';
 
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../../redux/Slices/auth-slice';
 
 const Login = ({ user = null }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { role, error } = useSelector((state) => state.login);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
@@ -37,11 +35,22 @@ const Login = ({ user = null }) => {
 
         setPasswordError('');
         setEmailError('');
-        dispatch(loginUser({ email, password }));
+        const resp = await dispatch(loginUser({ email, password }));
+        if(resp?.payload.message == 'User not found'){
+            setEmailError(resp.payload.message);
+            return;
+        } else if (resp?.payload.message == 'Invalid password'){
+            setPasswordError(resp.payload.message);
+            return;
+        } else if(resp?.payload.message == 'Please verify your account first on your Email !'){
+            alert(resp.payload.message);
+            return;
+        }
 
-        if (role === 'user' && !error) {
+        if (resp?.payload.role === 'user') {
+            console.log('in login page');
             navigate('/');
-        } else if (role === 'admin' && !error) {
+        } else if (resp?.payload.role === 'admin' ) {
             navigate('/dashboard-page');
         }
     };
@@ -96,9 +105,9 @@ const Login = ({ user = null }) => {
                             {passwordError ? (
                                 <div className="text-danger">{passwordError}</div>
                             ) : null}
-                            {error ? (
+                            {/* {error ? (
                                 <div className="text-danger">{error}</div>
-                            ) : null}
+                            ) : null} */}
                         </Form.Group>
 
                         <Form.Group>

@@ -12,7 +12,6 @@ export const fetchProductsData = createAsyncThunk(
     skip,
     title = '',
   }, thunkAPI) => {
-    console.log('check limit and skip in slice', limit, skip);
     try {
       const response = await axios.get(`http://localhost:4000/api/prod/get-prod?limit=${limit}&skip=${skip}&minPrice=${minPrice}&maxPrice=${maxPrice}&sortField=${sortField}&sortOrder=${sortOrder}&title=${title}`);
       const productsData = response.data;
@@ -33,8 +32,8 @@ export const deleteProduct = createAsyncThunk(
             'Authorization': `Bearer ${token}`,
           },
         });
-      const productsData = response.data;
-      return productsData;
+
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -121,9 +120,7 @@ export const editProduct = createAsyncThunk(
         }
       });
 
-      const updatedProduct = response.data;
-      console.log(response.data);
-      return updatedProduct;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -160,6 +157,7 @@ const FetchSlice = createSlice({
     builder
       .addCase(fetchProductsData.pending, (state) => {
         state.loading = true;
+        // state.orderSuccess = false;
         state.error = null;
       })
       .addCase(fetchProductsData.fulfilled, (state, action) => {
@@ -167,8 +165,7 @@ const FetchSlice = createSlice({
         state.productsData = action.payload;
         state.userProductsData = [...state.userProductsData, ...action.payload.products];
         state.total = action.payload.total;
-        console.log('in slice', state.productsData);
-        state.orderSuccess = false;
+        state.orderSuccess = true;
         state.error = null;
       })
       .addCase(fetchProductsData.rejected, (state, action) => {
@@ -214,7 +211,7 @@ const FetchSlice = createSlice({
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         state.loading = false;
-        const productIdToDelete = action.payload.deletedProduct._id;
+        const productIdToDelete = action.payload.productId;
         state.productsData = {
           ...state.productsData,
           products: state.productsData.products.filter(product => product._id !== productIdToDelete)

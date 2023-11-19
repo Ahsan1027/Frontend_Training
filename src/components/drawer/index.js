@@ -25,7 +25,7 @@ function OffCanvasExample({
     index = null,
     orderDetail = null,
     addresses = null,
-    clickedIndex = null,
+    clickedIndex = 0,
     ...props
 }) {
     const { id, token, username, email, customerId } = useSelector((state) => state.login);
@@ -48,6 +48,10 @@ function OffCanvasExample({
     const [expiryDate, setExpiryDate] = useState('');
     const [CVC, setCVC] = useState('');
     const [title, setTitle] = useState('');
+    // const [productName, setproductName] = useState('');
+    // const [prodPrice, setProdPrice] = useState('');
+    // const [prodStock, setprodStock] = useState('');
+    // const [prodRating, setprodRating] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
     const [remainingFiles, setRemainingFiles] = useState([]);
     const [selectedUserIndex, setSelectedUserIndex] = useState(clickedIndex);
@@ -55,7 +59,7 @@ function OffCanvasExample({
     const [checksError, setError] = useState(false);
     const [selectedSizes, setSelectedSizes] = useState([]);
     const [selectedColors, setSelectedColors] = useState([]);
-    const [selectedCardIndex, setSelectedCardIndex] = useState(0);
+    const [selectedCardIndex, setSelectedCardIndex] = useState(clickedIndex);
 
     const colorStyles = {
         Green: 'custom-green',
@@ -246,7 +250,7 @@ function OffCanvasExample({
         onClose(true, custId, selectedCardIndex);
     };
 
-    const handleClose7 = () =>{
+    const handleClose7 = () => {
         onClose1(selectedCardIndex);
     };
 
@@ -374,15 +378,19 @@ function OffCanvasExample({
                                 const price = priceRef.current.value;
                                 const stock = stockRef.current.value;
                                 const rating = ratingRef.current.value;
+                                // setprodRating(rating);
+                                // setProdPrice(price);
+                                // setprodStock(stock);
+                                // setproductName(productName);
                                 const isAddProduct = Name === 'Add Product';
 
-                                if (isAddProduct && (!productName || !price || !stock || !rating || !selectedSizes.length || !selectedColors.length)) {
+                                if (isAddProduct &&
+                                    (!productName || !price || isNaN(price) || !stock || isNaN(stock) || !rating || isNaN(rating) || !selectedSizes.length || !selectedColors.length)
+                                ) {
                                     setError(true);
-                                    console.log('check error', productName, price, stock, rating, selectedSizes, selectedColors);
-                                    alert('Fill all Empty Fields!');
+                                    alert('Fill all Empty Fields or Enter the Correct Values !');
                                     return;
                                 }
-                                console.log('check values ', productName, price, stock, rating, selectedSizes, selectedColors);
                                 handleClose(productName, price, stock, rating, selectedSizes, selectedColors);
                             }} className={`mt-5 custom-button ${Name === 'Add Product' && checksError ? 'disable-button' : ''}`}
                                 disabled={false}
@@ -504,7 +512,7 @@ function OffCanvasExample({
                                     <Input
                                         type="text"
                                         placeholder={placeholders[0]}
-                                        value={fullName}
+                                        // value={fullName}
                                         onChange={(e) => setFullName(e.target.value)}
                                     />
                                     <Row>
@@ -515,7 +523,7 @@ function OffCanvasExample({
                                             <Input
                                                 type="text"
                                                 placeholder={placeholders[1]}
-                                                value={mobile}
+                                                // value={mobile}
                                                 onChange={(e) => setMobile(e.target.value)}
                                             />
                                         </Col>
@@ -561,7 +569,7 @@ function OffCanvasExample({
                                         type="text"
                                         placeholder={placeholders[5]}
                                         className='Address-height'
-                                        value={address}
+                                        // value={address}
                                         onChange={(e) => setAddress(e.target.value)}
                                     />
                                 </Form.Group>
@@ -706,19 +714,29 @@ function OffCanvasExample({
                             <div className='d-flex'>
                                 {cards.map((card, index) => (
                                     <div key={index}
-                                    className={'ms-3 mt-4 payment-size3'}
-                                    style={{
-                                        border: selectedCardIndex === index ? '2px solid #007BFF' : '1px solid #000',
-                                        cursor: 'pointer',
-                                      }}
+                                        className={'ms-3 mt-4 payment-size3'}
+                                        style={{
+                                            border: selectedCardIndex === index ? '2px solid #007BFF' : '1px solid #000',
+                                            cursor: 'pointer',
+                                        }}
                                         onClick={() => setSelectedCardIndex(index)}
                                     >
                                         <div className='ms-2 mt-2'>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="33" viewBox="0 0 50 33" fill="none">
-                                                <path d="M45.3122 0.515625H4.68717C2.38599 0.515625 0.520508 2.36245 0.520508 4.64062V28.3594C0.520508 30.6376 2.38599 32.4844 4.68717 32.4844H45.3122C47.6134 32.4844 49.4788 30.6376 49.4788 28.3594V4.64062C49.4788 2.36245 47.6134 0.515625 45.3122 0.515625Z" fill="white" stroke="black" strokeOpacity="0.2" strokeWidth="0.5" />
-                                                <path d="M5.80745 12.1985C4.71757 11.6067 3.47371 11.1308 2.08301 10.8005L2.14134 10.5433H7.84338C8.61626 10.5701 9.24341 10.8003 9.44748 11.6133L10.6867 17.4623L11.0663 19.224L14.5371 10.5433H18.2847L12.714 23.2599H8.96627L5.80745 12.1985ZM21.0413 23.2734H17.4972L19.7139 10.5433H23.2578L21.0413 23.2734ZM33.8888 10.8545L33.4068 13.6034L33.0863 13.4682C32.445 13.2108 31.5985 12.9536 30.4463 12.9808C29.0471 12.9808 28.4195 13.5357 28.405 14.0775C28.405 14.6735 29.1641 15.0662 30.4037 15.6487C32.4456 16.5561 33.3927 17.6665 33.3785 19.1156C33.3498 21.7566 30.9289 23.4631 27.2102 23.4631C25.6202 23.4494 24.0888 23.1373 23.2576 22.7856L23.7535 19.928L24.2202 20.1314C25.3724 20.6058 26.1305 20.8085 27.5455 20.8085C28.5658 20.8085 29.6599 20.4154 29.6738 19.5626C29.6738 19.0073 29.2077 18.6007 27.8366 17.9777C26.4951 17.368 24.7014 16.3525 24.7305 14.5241C24.7456 12.0459 27.2102 10.3125 30.7101 10.3125C32.081 10.3125 33.1898 10.5969 33.8888 10.8545ZM38.5992 18.7636H41.5449C41.3992 18.1271 40.7281 15.0799 40.7281 15.0799L40.4804 13.983C40.3054 14.4569 39.9994 15.229 40.0141 15.2018C40.0141 15.2018 38.891 18.0322 38.5992 18.7636ZM42.9738 10.5433L45.833 23.2732H42.5516C42.5516 23.2732 42.2304 21.8106 42.1287 21.3636H37.5784C37.4468 21.702 36.8346 23.2732 36.8346 23.2732H33.1159L38.3802 11.5995C38.7449 10.7733 39.3872 10.5433 40.2325 10.5433H42.9738Z" fill="#171E6C" />
-                                            </svg>
-                                            {card.brand} Card
+                                            {card.brand == 'Visa' ? (
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="33" viewBox="0 0 50 33" fill="none">
+                                                    <path d="M45.3122 0.515625H4.68717C2.38599 0.515625 0.520508 2.36245 0.520508 4.64062V28.3594C0.520508 30.6376 2.38599 32.4844 4.68717 32.4844H45.3122C47.6134 32.4844 49.4788 30.6376 49.4788 28.3594V4.64062C49.4788 2.36245 47.6134 0.515625 45.3122 0.515625Z" fill="white" stroke="black" strokeOpacity="0.2" strokeWidth="0.5" />
+                                                    <path d="M5.80745 12.1985C4.71757 11.6067 3.47371 11.1308 2.08301 10.8005L2.14134 10.5433H7.84338C8.61626 10.5701 9.24341 10.8003 9.44748 11.6133L10.6867 17.4623L11.0663 19.224L14.5371 10.5433H18.2847L12.714 23.2599H8.96627L5.80745 12.1985ZM21.0413 23.2734H17.4972L19.7139 10.5433H23.2578L21.0413 23.2734ZM33.8888 10.8545L33.4068 13.6034L33.0863 13.4682C32.445 13.2108 31.5985 12.9536 30.4463 12.9808C29.0471 12.9808 28.4195 13.5357 28.405 14.0775C28.405 14.6735 29.1641 15.0662 30.4037 15.6487C32.4456 16.5561 33.3927 17.6665 33.3785 19.1156C33.3498 21.7566 30.9289 23.4631 27.2102 23.4631C25.6202 23.4494 24.0888 23.1373 23.2576 22.7856L23.7535 19.928L24.2202 20.1314C25.3724 20.6058 26.1305 20.8085 27.5455 20.8085C28.5658 20.8085 29.6599 20.4154 29.6738 19.5626C29.6738 19.0073 29.2077 18.6007 27.8366 17.9777C26.4951 17.368 24.7014 16.3525 24.7305 14.5241C24.7456 12.0459 27.2102 10.3125 30.7101 10.3125C32.081 10.3125 33.1898 10.5969 33.8888 10.8545ZM38.5992 18.7636H41.5449C41.3992 18.1271 40.7281 15.0799 40.7281 15.0799L40.4804 13.983C40.3054 14.4569 39.9994 15.229 40.0141 15.2018C40.0141 15.2018 38.891 18.0322 38.5992 18.7636ZM42.9738 10.5433L45.833 23.2732H42.5516C42.5516 23.2732 42.2304 21.8106 42.1287 21.3636H37.5784C37.4468 21.702 36.8346 23.2732 36.8346 23.2732H33.1159L38.3802 11.5995C38.7449 10.7733 39.3872 10.5433 40.2325 10.5433H42.9738Z" fill="#171E6C" />
+                                                </svg>
+                                            ) : (
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="51" height="34" viewBox="0 0 51 34" fill="none">
+                                                    <path d="M46.75 0H4.25C1.90279 0 0 1.90279 0 4.25V29.75C0 32.0972 1.90279 34 4.25 34H46.75C49.0972 34 51 32.0972 51 29.75V4.25C51 1.90279 49.0972 0 46.75 0Z" fill="#252525" />
+                                                    <path d="M19.125 27.625C24.993 27.625 29.75 22.868 29.75 17C29.75 11.132 24.993 6.375 19.125 6.375C13.257 6.375 8.5 11.132 8.5 17C8.5 22.868 13.257 27.625 19.125 27.625Z" fill="#EB001B" />
+                                                    <path d="M31.875 27.625C37.743 27.625 42.5 22.868 42.5 17C42.5 11.132 37.743 6.375 31.875 6.375C26.007 6.375 21.25 11.132 21.25 17C21.25 22.868 26.007 27.625 31.875 27.625Z" fill="#F79E1B" />
+                                                    <path fillRule="evenodd" clipRule="evenodd" d="M25.5 8.49902C28.0807 10.4375 29.75 13.5237 29.75 16.9998C29.75 20.4759 28.0807 23.5621 25.5 25.5006C22.9193 23.5621 21.25 20.4759 21.25 16.9998C21.25 13.5237 22.9193 10.4375 25.5 8.49902Z" fill="#FF5F00" />
+                                                </svg>
+                                            )}
+
+                                            {card.brand}
                                         </div>
                                         <div className='d-flex justify-content-between mt-2'>
                                             <div className='mt-1 ms-2'>**** **** **** {card.last4}</div>
