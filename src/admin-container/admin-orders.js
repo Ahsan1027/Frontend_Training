@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Rectangle from '../components/rectangle';
 import { ProductsTableComponent, PaginationComponent } from './admin-products';
+// import { ProductsTableComponent } from '../components/try1';
+// import { PaginationComponent } from '../components/try';
 import { fetchOrdersData } from '../redux/Slices/order-slice';
 import { fetchOrderStats } from '../redux/Slices/order-slice';
 // import Button from '../components/button';

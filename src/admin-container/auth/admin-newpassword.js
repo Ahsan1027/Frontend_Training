@@ -29,14 +29,28 @@ const NewPassword = () => {
         e.preventDefault();
 
         const resp = await dispatch(newPassword({ password, confirmPassword, token }));
-        if (resp?.error) {
-            setConfirmPasswordError('Passwords do not match.');
+        console.log('check response', resp?.payload);
+        if (resp?.payload == 'Link Expired') {
+            setConfirmPasswordError('');
+            alert(resp?.payload);
+            // return;
+        }
+        else if (password != confirmPassword) {
+            setConfirmPasswordError('Passwords do not match');
+            setPasswordError('');
+            // return;
+        }
+        else if(password.length < 8){
+            setConfirmPasswordError('');
+            setPasswordError('Password must be Atleast 8 Characters !');
+            // return;
         }
         else {
             navigate('/login');
             setPasswordError('');
             setConfirmPasswordError('');
         }
+        // return;
     };
 
     return (

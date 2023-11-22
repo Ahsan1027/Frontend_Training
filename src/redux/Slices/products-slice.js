@@ -11,9 +11,11 @@ export const fetchProductsData = createAsyncThunk(
     limit,
     skip,
     title = '',
+    size = '',
+    color = ''
   }, thunkAPI) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/prod/get-prod?limit=${limit}&skip=${skip}&minPrice=${minPrice}&maxPrice=${maxPrice}&sortField=${sortField}&sortOrder=${sortOrder}&title=${title}`);
+      const response = await axios.get(`http://localhost:4000/api/prod/get-prod?limit=${limit}&skip=${skip}&minPrice=${minPrice}&maxPrice=${maxPrice}&sortField=${sortField}&sortOrder=${sortOrder}&title=${title}&color=${color}&size=${size}`);
       const productsData = response.data;
       return productsData;
     } catch (error) {
@@ -81,39 +83,43 @@ export const editProduct = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const {
-        editedProductData,
+        prodId,
         title,
         price,
         stock,
         rating,
+        prodImages,
+        images,
+        deleted,
         thumbnail,
         selectedSizes,
         selectedColors,
         token } = data;
 
       const updateFields = {};
-      if (title !== '') {
-        updateFields.title = title;
-      }
-      if (price !== '') {
-        updateFields.price = price;
-      }
-      if (stock !== '') {
-        updateFields.stock = stock;
-      }
-      if (rating !== '') {
-        updateFields.rating = rating;
-      }
-      if (thumbnail !== '') {
-        updateFields.thumbnail = thumbnail;
-      }
-      if (selectedSizes !== '') {
-        updateFields.selectedSizes = selectedSizes;
-      }
-      if (selectedColors !== '') {
-        updateFields.selectedColors = selectedColors;
-      }
-      const response = await axios.put(`http://localhost:4000/api/prod/edit-prod/${editedProductData}`, updateFields, {
+      updateFields.prodId = prodId;
+
+      if (title) updateFields.title = title;
+
+      if (price) updateFields.price = price;
+
+      if (stock) updateFields.stock = stock;
+
+      if (rating) updateFields.rating = rating;
+
+      if (thumbnail) updateFields.thumbnail = thumbnail;
+
+      if (prodImages) updateFields.prodImages = prodImages;
+
+      if (images) updateFields.images = images;
+
+      if (deleted) updateFields.deleted = deleted;
+
+      if (selectedSizes) updateFields.selectedSizes = selectedSizes;
+
+      if (selectedColors) updateFields.selectedColors = selectedColors;
+
+      const response = await axios.put('http://localhost:4000/api/prod/edit-prod', updateFields, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`,

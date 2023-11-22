@@ -186,9 +186,8 @@ const OrderSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(addOrder.fulfilled, (state, action) => {
+      .addCase(addOrder.fulfilled, (state) => {
         state.loading = false;
-        console.log('check order action payload',action.payload);
         state.error = null;
       })
       .addCase(addOrder.rejected, (state, action) => {
@@ -234,18 +233,18 @@ const OrderSlice = createSlice({
       })
       .addCase(updateDeliveryStatus.pending, (state) => {
         state.loading = true;
-        state.orderDeliverSuccess = false,
-          state.error = null;
+        state.orderDeliverSuccess = false;
+        state.error = null;
       })
       .addCase(updateDeliveryStatus.fulfilled, (state, action) => {
         state.productsData = action.payload;
-        state.orderDeliverSuccess = true,
-          state.loading = false;
+        state.orderDeliverSuccess = true;
+        state.loading = false;
       })
       .addCase(updateDeliveryStatus.rejected, (state, action) => {
         state.loading = false;
-        state.orderDeliverSuccess = false,
-          state.error = action.payload;
+        state.orderDeliverSuccess = false;
+        state.error = action.payload;
       });
   },
 });

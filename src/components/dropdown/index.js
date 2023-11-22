@@ -6,16 +6,11 @@ import DropDownWrapper from './style';
 
 function Dropdowns({
     names = null,
-    Action1 = null,
-    Action2 = null,
-    Action3 = null,
-    Action4 = null,
-    Action5 = null,
-    Action6 = null,
-    Action7 = null,
-    Action8 = null,
-    onPriceChange,
-    onSelect
+    actions = [],
+    onPriceChange = null,
+    onSelect = null,
+    onSelectColor = null,
+    onSelectSize = null
 }) {
     const handleActionClick = (action) => {
         if (action.startsWith('All')) {
@@ -23,11 +18,20 @@ function Dropdowns({
         } else if (action === 'Asc' || action === 'Desc') {
             const order = action.toLowerCase();
             onSelect(order);
+        } else if (action == 'Black' || action == 'Green' || action == 'Grey' || action == 'Maroon' || action == 'Purple') {
+            onSelectColor(action);
+        } else if (action == 'XS' || action == 'S' || action == 'M' || action == 'L' || action == 'XL' || action == '2XL' || action == '3XL') {
+            onSelectSize(action);
+        } else if (action == 'NoSize') {
+            onSelectSize('');
+        } else if (action == 'NoColor') {
+            onSelectColor('');
         } else {
             const [min, max] = action.split(' - ');
             onPriceChange(min, max);
         }
     };
+
     return (
         <>
             <DropDownWrapper>
@@ -38,40 +42,18 @@ function Dropdowns({
                     title={names}
                     className='border mx-2 color'
                 >
-                    {Action7 && Action8 ? (
-                        <>
-                            <Dropdown.Item eventKey="1" className='border-bottom' onClick={() => handleActionClick(Action7)}>
-                                {Action7}
-                            </Dropdown.Item>
-                            <Dropdown.Item eventKey="2" className='border-bottom' onClick={() => handleActionClick(Action8)}>
-                                {Action8}
-                            </Dropdown.Item>
-                        </>
-                    ) : (
-                        <>
-                            <Dropdown.Item eventKey="1" className='border-bottom' onClick={() => handleActionClick(Action1)}>
-                                {Action1}
-                            </Dropdown.Item>
-                            <Dropdown.Item eventKey="2" className='border-bottom' onClick={() => handleActionClick(Action2)}>
-                                {Action2}
-                            </Dropdown.Item>
-                            <Dropdown.Item eventKey="3" className='border-bottom' onClick={() => handleActionClick(Action3)}>
-                                {Action3}
-                            </Dropdown.Item>
-                            <Dropdown.Item eventKey="4" className='border-bottom' onClick={() => handleActionClick(Action4)}>
-                                {Action4}
-                            </Dropdown.Item>
-                            <Dropdown.Item eventKey="5" className='border-bottom' onClick={() => handleActionClick(Action5)}>
-                                {Action5}
-                            </Dropdown.Item>
-                            <Dropdown.Item eventKey="6" onClick={() => handleActionClick(Action6)}>
-                                {Action6}
-                            </Dropdown.Item>
-                        </>
-                    )}
+                    {actions.map((action, index) => (
+                        <Dropdown.Item
+                            key={index}
+                            eventKey={index.toString()}
+                            className={index < actions.length - 1 ? 'border-bottom' : ''}
+                            onClick={() => handleActionClick(action)}
+                        >
+                            {action}
+                        </Dropdown.Item>
+                    ))}
                 </DropdownButton>
             </DropDownWrapper>
-
         </>
     );
 }

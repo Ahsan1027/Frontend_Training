@@ -30,7 +30,6 @@ const Rectangle = ({ title = null, totalProducts = null, totalOrder = null, tota
                         </h5>
                         <div className='d-flex mt-3 custom-size'>
                             <div className='ms-3'> Total Products {totalProducts}
-                                {/* <div className='d-flex'>Total Units {totalUnits}</div> */}
                             </div>
                             <div className='ms-5' >Total Orders {totalOrder}
                                 <div className='d-flex'> Total Sales {totalSales}</div>

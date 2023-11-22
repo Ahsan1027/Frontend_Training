@@ -15,7 +15,13 @@ import { fetchProductsData, addProduct } from '../redux/Slices/products-slice';
 import Modal from '../components/modal';
 import Trash from '../components/trash';
 
-const ProductsTableComponent = ({ headings = null, data = null, error = null, name = null, value = null }) => {
+export const ProductsTableComponent = ({
+  headings = null,
+  data = null,
+  error = null,
+  name = null,
+  value = null,
+}) => {
   return (
     <>
       {error ? (
@@ -23,13 +29,18 @@ const ProductsTableComponent = ({ headings = null, data = null, error = null, na
           {error}
         </div>
       ) : (
-        <ProductsTable headings={headings} data={data} name={name} value={value} />
+        <ProductsTable
+          headings={headings}
+          data={data}
+          name={name}
+          value={value}
+        />
       )}
     </>
   );
 };
 
-const PaginationComponent = ({ currentPage, totalPages, onPageChange, itemsPerPage = 5, error = null }) => {
+export const PaginationComponent = ({ currentPage, totalPages, onPageChange, itemsPerPage = 5, error = null }) => {
   return (
     <>
       {error ? (
@@ -51,18 +62,27 @@ const AdminProducts = () => {
   const headingsFromFile = ['Row', 'MissingFields'];
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
-  // const [searchQuery, setSearchQuery] = useState('');
   const [add, setAdd] = useState(false);
   const [Cross, setCross] = useState(false);
   const [Status, setStatus] = useState(false);
   const [FileError, setFileError] = useState(false);
   const [Bulk, setBulk] = useState(false);
   const placeholders = ['Add Product Name', 'Quantity'];
-  // const [searchTitle, setTitle ] = useState('');
   const limit = 5;
 
   const dispatch = useDispatch();
-  let { productsData, loading, error, addSuccess, deleteSuccess, editSuccess, fileName, fileData, fileError, fileErrors } = useSelector((state) => state.fetch);
+  let {
+    productsData,
+    loading,
+    error,
+    addSuccess,
+    deleteSuccess,
+    editSuccess,
+    fileName,
+    fileData,
+    fileError,
+    fileErrors
+  } = useSelector((state) => state.fetch);
   let { token } = useSelector((state) => state.login);
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -91,7 +111,6 @@ const AdminProducts = () => {
 
   useEffect(() => {
     dispatch(fetchProductsData({
-      // title: searchQuery,
       token,
       limit,
       skip: (limit * (currentPage - 1))
@@ -110,13 +129,12 @@ const AdminProducts = () => {
 
   const handleSearch = _debounce((e) => {
     const query = e.target.value.toLowerCase();
-    // setSearchQuery(query);
     debouncedFetchData(query);
   }, 500);
 
   return (
     <div className='mt-4 '>
-      <div style={{ display: loading ? 'none' : 'block' }}>
+      <div style={{ display: 'block' }}>
         <div className="content p-5 " style={{ backgroundColor: 'rgba(0, 0, 0, 0.045)' }}>
           {Status && (
             <div className='border border-dark' style={Styling.border_color}>
@@ -297,5 +315,3 @@ const AdminProducts = () => {
 };
 
 export default AdminProducts;
-export { ProductsTableComponent, PaginationComponent };
-

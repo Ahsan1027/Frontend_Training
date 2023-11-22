@@ -176,16 +176,18 @@ const LoginSlice = createSlice({
 			})
 			.addCase(forgotUser.pending, (state) => {
 				state.loading = true;
+				state.message = null;
 				state.error = null;
 			})
-			.addCase(forgotUser.fulfilled, (state) => {
+			.addCase(forgotUser.fulfilled, (state, action) => {
 				state.loading = false;
+				state.message = action.payload.message;
 				state.role = null;
 				state.error = null;
 			})
 			.addCase(forgotUser.rejected, (state, action) => {
 				state.loading = false;
-				state.error = action.payload;
+				state.error = action.payload.message;
 			})
 			.addCase(verifyUser.pending, (state) => {
 				state.loading = true;
@@ -194,7 +196,6 @@ const LoginSlice = createSlice({
 			})
 			.addCase(verifyUser.fulfilled, (state, action) => {
 				state.loading = false;
-				console.log('check isVerfiied',action.payload);
 				state.isVerified = action.payload.message;
 				state.error = null;
 			})

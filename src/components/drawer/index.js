@@ -26,6 +26,13 @@ function OffCanvasExample({
     orderDetail = null,
     addresses = null,
     clickedIndex = 0,
+    prodPrice = null,
+    prodRating = null,
+    prodStock = null,
+    productName = null,
+    productSizes = null,
+    productColors = null,
+    productImages = null,
     ...props
 }) {
     const { id, token, username, email, customerId } = useSelector((state) => state.login);
@@ -48,18 +55,20 @@ function OffCanvasExample({
     const [expiryDate, setExpiryDate] = useState('');
     const [CVC, setCVC] = useState('');
     const [title, setTitle] = useState('');
-    // const [productName, setproductName] = useState('');
-    // const [prodPrice, setProdPrice] = useState('');
-    // const [prodStock, setprodStock] = useState('');
-    // const [prodRating, setprodRating] = useState('');
+    const [editproductName, setproductName] = useState(productName);
+    const [editprodPrice, setProdPrice] = useState(prodPrice);
+    const [editprodStock, setProdStock] = useState(prodStock);
+    const [editprodRating, setprodRating] = useState(prodRating);
     const [selectedFile, setSelectedFile] = useState(null);
     const [remainingFiles, setRemainingFiles] = useState([]);
     const [selectedUserIndex, setSelectedUserIndex] = useState(clickedIndex);
     const [isEmptyFields, setIsEmptyFields] = useState(false);
     const [checksError, setError] = useState(false);
-    const [selectedSizes, setSelectedSizes] = useState([]);
-    const [selectedColors, setSelectedColors] = useState([]);
+    const [selectedSizes, setSelectedSizes] = useState(productSizes || []);
+    const [selectedColors, setSelectedColors] = useState(productColors || []);
     const [selectedCardIndex, setSelectedCardIndex] = useState(clickedIndex);
+    const [prodImages, setProdImages] = useState(productImages);
+    const [deleted, setDeleted] = useState([]);
 
     const colorStyles = {
         Green: 'custom-green',
@@ -149,7 +158,18 @@ function OffCanvasExample({
     }
     const [show, setShow] = useState(state);
     const [Name, setName] = useState(name);
+
     const handleClose = (productName, price, stock, rating) => {
+        if ((price) < 1 || (stock) < 1 || (rating) < 1) {
+            setError(true);
+            alert('Price, stock, and rating cannot be less than 1 !');
+            return;
+        }
+        if (rating > 5) {
+            setError(true);
+            alert('Rating cannot be greater than 5');
+            return;
+        }
         if (!selectedFile && Name == 'Add Product') {
             setError(true);
             alert('Fill all Empty Fields!');
@@ -157,7 +177,7 @@ function OffCanvasExample({
         } else if (Name == 'Add Product') {
             onClose(selectedFile, productName, price, stock, rating, remainingFiles, selectedSizes, selectedColors);
         } else if (Name == 'Edit Product') {
-            onClose(selectedFile, productName, price, stock, rating, selectedSizes, selectedColors);
+            onClose(selectedFile, productName, price, stock, rating, prodImages, remainingFiles, deleted, selectedSizes, selectedColors);
         }
     };
 
@@ -237,7 +257,6 @@ function OffCanvasExample({
             setIsEmptyFields(true);
             return;
         }
-        console.log('check selected user card index', selectedCardIndex);
         setIsEmptyFields(false);
         const dateParts = expiryDate.split('/');
 
@@ -261,6 +280,7 @@ function OffCanvasExample({
 
     const handleDragOver = (event) => {
         event.preventDefault();
+        setSelectedFile(event.dataTransfer.files[0]);
     };
 
     const handleFileChange = (e) => {
@@ -278,6 +298,14 @@ function OffCanvasExample({
     const isInvalidCardNum = (cardNum) => {
         const cleanCardNum = cardNum.replace(/\D/g, '');
         return cleanCardNum.length !== 16;
+    };
+
+    const handleRemoveImage = (indexToRemove) => {
+        let index = prodImages.indexOf(prodImages[indexToRemove]);
+        setDeleted(prevDeleted => [...prevDeleted, prodImages[index]]);
+        let temp = [...prodImages];
+        temp.splice(index, 1);
+        setProdImages(temp);
     };
 
     useEffect(() => {
@@ -330,17 +358,35 @@ function OffCanvasExample({
                                                 id="customFile"
                                                 onChange={handleFileChange}
                                                 onClick={(e) => e.target.value = null}
+                                                accept=".png, .jpg, .jpeg"
                                                 multiple
                                             />
                                         </div>
                                     </Form.Group>
                                 </Form>
                                 <input type="hidden" ref={selectedfileRef} value={selectedFile ? selectedFile.name : ''} />
+                                <div className='mt-4 d-flex flex-wrap' >
+                                    {Name === 'Edit Product' && prodImages && prodImages.length > 0 && (
+                                        <div className="d-flex flex-wrap justify-content-start ms-1 mt-4">
+                                            {prodImages.map((image, index) => (
+                                                <div key={index} className="position-relative border me-2 mb-2" style={{ width: '60px', height: '60px' }}>
+                                                    <img src={`http://localhost:4000/${image}`} className='' style={{ width: '40px', height: '40px' }} alt={`Product Image ${index + 1}`} />
+                                                    <span className="position-absolute top-0 end-0" style={{ cursor: 'pointer' }} onClick={() => handleRemoveImage(index)}>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x-circle" viewBox="0 0 16 16">
+                                                            <path d="M8 0C3.582 0 0 3.582 0 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8zm4.646 10.354a.5.5 0 0 1-.708 0L8 8.707 4.354 12.354a.5.5 0 1 1-.708-.708L7.293 8 3.646 4.354a.5.5 0 0 1 .708-.708L8 7.293l3.646-3.647a.5.5 0 0 1 .708.708L8.707 8l3.647 3.646a.5.5 0 0 1 0 .708z" />
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
+
                         <div className='d-flex flex-column w-75 ms-3'>
                             <Form.Label className='ms-2'>Product Name</Form.Label>
-                            <Form.Control as="textarea" placeholder={placeholders[0]} rows={3} ref={productNameRef} />
+                            <Form.Control as="textarea" placeholder={placeholders[0]} value={editproductName} onChange={(event) => setproductName(event.target.value)} rows={3} ref={productNameRef} />
                             <Form.Label className="ms-2 mt-4 ">Size</Form.Label>
                             <div className="d-flex flex-wrap justify-content-start ms-1">
                                 {sizes.map((size, index) => (
@@ -367,21 +413,17 @@ function OffCanvasExample({
                                     </Button>
                                 ))}
                             </div>
-                            <Form.Label className="ms-2 mt-4 ">Price</Form.Label>
-                            <Form.Control as="textarea" placeholder='$00.00' rows={1} ref={priceRef} />
+                            <Form.Label className="ms-2 mt-4 " >Price</Form.Label>
+                            <Form.Control as="textarea" value={editprodPrice} onChange={(event) => setProdPrice(event.target.value)} rows={1} ref={priceRef} />
                             <Form.Label className="ms-2 mt-4 ">Stock</Form.Label>
-                            <Form.Control as="textarea" placeholder={placeholders[1]} rows={1} ref={stockRef} />
+                            <Form.Control as="textarea" value={editprodStock} onChange={(event) => setProdStock(event.target.value)} rows={1} ref={stockRef} />
                             <Form.Label className="ms-2 mt-4 ">Rating</Form.Label>
-                            <Form.Control as="textarea" rows={1} ref={ratingRef} />
+                            <Form.Control as="textarea" rows={1} value={editprodRating} onChange={(event) => setprodRating(event.target.value)} ref={ratingRef} />
                             <Button onClick={() => {
                                 const productName = productNameRef.current.value;
                                 const price = priceRef.current.value;
                                 const stock = stockRef.current.value;
                                 const rating = ratingRef.current.value;
-                                // setprodRating(rating);
-                                // setProdPrice(price);
-                                // setprodStock(stock);
-                                // setproductName(productName);
                                 const isAddProduct = Name === 'Add Product';
 
                                 if (isAddProduct &&
@@ -832,7 +874,14 @@ function Example({
     index = null,
     orderDetail = null,
     addresses = null,
-    clickedIndex = null
+    clickedIndex = null,
+    prodPrice = null,
+    prodRating = null,
+    prodStock = null,
+    productName = null,
+    productColors = null,
+    productSizes = null,
+    productImages = null,
 }) {
     return (
         <>
@@ -850,7 +899,15 @@ function Example({
                 index={index}
                 orderDetail={orderDetail}
                 addresses={addresses}
-                clickedIndex={clickedIndex} />
+                clickedIndex={clickedIndex}
+                prodPrice={prodPrice}
+                prodRating={prodRating}
+                prodStock={prodStock}
+                productName={productName}
+                productSizes={productSizes}
+                productColors={productColors}
+                productImages={productImages}
+            />
         </>
     );
 }

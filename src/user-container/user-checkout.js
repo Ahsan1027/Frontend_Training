@@ -106,6 +106,8 @@ const Checkout = () => {
                                     <ShoppingCart
                                         key={index}
                                         images={item.product.thumbnail}
+                                        colors={item.color}
+                                        sizes={item.size}
                                         title={item.product.title}
                                         price={item.price}
                                         quantity={item.quantity}

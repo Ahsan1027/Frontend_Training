@@ -6,15 +6,21 @@ import { addToCart } from '../../redux/Slices/user-cart-slice';
 import SidedivWrapper from './style';
 import { useNavigate } from 'react-router-dom';
 
-const Fixeddiv = ({ check = null, Index = 0 }) => {
+const Fixeddiv = (
+    {
+        check = null,
+        Index = 0
+    }
+) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     let { productsData } = useSelector((state) => state.fetch);
     const [quantity, setQuantity] = useState(1);
-    const [newIndex, setIndex] = useState(0);
+    // const [newIndex, setIndex] = useState(0);
     const [newColorIndex, setColorIndex] = useState();
     const [newSizeIndex, setSizeIndex] = useState();
     const [selectedThumbnail, setSelectedThumbnail] = useState(null);
+
     const colorClassMap = {
         'Green': 'Green',
         'Grey': 'Grey',
@@ -23,15 +29,9 @@ const Fixeddiv = ({ check = null, Index = 0 }) => {
         'Maroon': 'Maroon',
     };
 
-    if (Index != newIndex) {
-        setQuantity(1);
-        setSelectedThumbnail(null);
-        setIndex(Index);
-    }
-
     const handleIncrement = () => {
         const newQuantity = quantity + 1;
-        const stockQuantity = productsData.products[newIndex].stock;
+        const stockQuantity = productsData.products[Index].stock;
         if (newQuantity <= stockQuantity) {
             setQuantity(quantity + 1);
         } else {
@@ -40,7 +40,7 @@ const Fixeddiv = ({ check = null, Index = 0 }) => {
     };
 
     const handleDecrement = () => {
-        if (quantity > 0) {
+        if (quantity > 1) {
             setQuantity(quantity - 1);
         }
     };
@@ -50,18 +50,26 @@ const Fixeddiv = ({ check = null, Index = 0 }) => {
     };
 
     const handleShopping = () => {
+        const selectedColor = productsData?.products[Index]?.colors[newColorIndex];
+        const selectedSize = productsData?.products[Index]?.sizes[newSizeIndex];
+
+        if (!selectedColor || !selectedSize) {
+            alert('Please select color and size !');
+            return;
+        }
         const newQuantity = quantity;
-        const stockQuantity = productsData.products[newIndex].stock;
+        const stockQuantity = productsData.products[Index].stock;
         if (newQuantity <= stockQuantity) {
             setQuantity(quantity + 1);
         } else {
             alert('Not enough Stock');
             return;
         }
+
         const data = {
-            product: productsData?.products[newIndex],
-            color:productsData?.products[newIndex]?.colors[newColorIndex],
-            size:productsData?.products[newIndex]?.sizes[newSizeIndex],
+            product: productsData?.products[Index],
+            color: productsData?.products[Index]?.colors[newColorIndex],
+            size: productsData?.products[Index]?.sizes[newSizeIndex],
             quantity: quantity,
         };
         if (quantity == 0) {
@@ -70,7 +78,6 @@ const Fixeddiv = ({ check = null, Index = 0 }) => {
             dispatch(addToCart(data));
             navigate('/shopping-page');
         }
-
     };
 
     return (
@@ -81,12 +88,12 @@ const Fixeddiv = ({ check = null, Index = 0 }) => {
                         <>
                             <Col lg={6} md={3} sm={2}>
                                 <div className="p-2 mt-4 border div-size mx-auto justify-content-end color ">
-                                    <Image className='image-size' src={`http://localhost:4000/${selectedThumbnail || productsData?.products[newIndex]?.thumbnail}`} />
+                                    <Image className='image-size' src={`http://localhost:4000/${selectedThumbnail || productsData?.products[Index]?.thumbnail}`} />
                                     <div className='mt-4 custom-size1 d-flex justify-content-between'>
                                         <div className='d-flex align-items-center  '>
                                         </div>
                                         <div className='image-container d-flex'>
-                                            {productsData?.products[newIndex]?.images.map((image, index) => (
+                                            {productsData?.products[Index]?.images.map((image, index) => (
                                                 <div
                                                     key={index}
                                                     className='custom-size2 border'
@@ -137,10 +144,10 @@ const Fixeddiv = ({ check = null, Index = 0 }) => {
                             <>
                                 <Col lg={4} sm={4} md={4} className='d-flex flex-column no-left-margin'>
                                     <>
-                                        <div className='mt-5 ms-3 '>{productsData?.products[newIndex]?.title}</div>
+                                        <div className='mt-5 ms-3 '>{productsData?.products[Index]?.title}</div>
                                         <div className='ms-3 mt-4 fw-bold'>Color:
                                             <div className='d-flex mt-2' >
-                                                {productsData?.products[newIndex]?.colors.map((color, colorIndex) => (
+                                                {productsData?.products[Index]?.colors.map((color, colorIndex) => (
                                                     <div
                                                         key={colorIndex}
                                                         onClick={() => setColorIndex(colorIndex)}
@@ -152,7 +159,7 @@ const Fixeddiv = ({ check = null, Index = 0 }) => {
                                         </div>
                                         <div className='ms-3 mt-3 fw-bold'>Sizes:
                                             <div className="d-flex flex-wrap justify-content-start ms-1 mt-2">
-                                                {productsData?.products[newIndex]?.sizes.map((size, sizeIndex) => (
+                                                {productsData?.products[Index]?.sizes.map((size, sizeIndex) => (
                                                     <Button
                                                         key={sizeIndex}
                                                         onClick={() => setSizeIndex(sizeIndex)}
@@ -167,7 +174,7 @@ const Fixeddiv = ({ check = null, Index = 0 }) => {
                                         <div className='ms-3 mt-3'>
                                             <div className='d-flex'>
                                                 <div className=''>Price:</div>
-                                                <div className='ms-3 fw-bold text-primary'>${productsData?.products[newIndex].price}</div>
+                                                <div className='ms-3 fw-bold text-primary'>${productsData?.products?.[Index].price}</div>
                                             </div>
                                         </div>
                                     </>

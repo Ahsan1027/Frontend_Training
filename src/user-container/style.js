@@ -1,21 +1,16 @@
 import styled from 'styled-components';
 const ListingWrapper = styled.div`
-/* background: #F8F9FA; */
-/* overflow:auto; */
 background: var(--global-07-light, #F8F9FA);
 width: 1450px;
 .header-size{
     position: fixed;
     width: 95.75%;
-    margin-top: 50px;
+    margin-top: 40px;
     z-index: 1;
     background-color: #F8F9FA;
 }
 .scrolling{
-    /* height: 853px; */
-    /* height: calc(100vh - 40px); */
     overflow:auto;
-    /* margin-top: 40px; */
 }
 .custom-size{
     margin-top: 110px;

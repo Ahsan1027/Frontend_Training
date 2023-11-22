@@ -5,6 +5,7 @@ import Chart from '../components/charts';
 import { useSelector, useDispatch } from 'react-redux';
 import {  fetchDashboardStats } from '../redux/Slices/dashboard-slice';
 import { ProductsTableComponent } from './admin-products';
+// import { ProductsTableComponent } from '../components/try1';
 import Styling from './auth/style';
 
 const Dashboard = () => {

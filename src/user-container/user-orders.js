@@ -16,8 +16,6 @@ const Orders = () => {
         setCurrentPage(pageNumber);
     };
 
-    console.log('checking token in orders',token);
-
     useEffect(() => {
         dispatch(fetchOrdersData({ currentPage, email, token }));
     }, [currentPage]);

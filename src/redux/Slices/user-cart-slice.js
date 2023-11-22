@@ -98,15 +98,23 @@ const cartSlice = createSlice({
       );
 
       if (existingItem) {
-        existingItem.quantity += quantity;
+        if (existingItem.quantity + quantity <= existingItem.product.stock) {
+          existingItem.quantity += quantity;
+        }
       } else {
-        state.items.push({
-          product,
-          color,
-          size,
-          price: product.price,
-          quantity,
-        });
+        const totalQuantityForSizeAndColor = state.items
+          .filter((item) => item.product._id === product._id)
+          .reduce((total, item) => total + item.quantity, 0);
+
+        if (totalQuantityForSizeAndColor + quantity <= product.stock) {
+          state.items.push({
+            product,
+            color,
+            size,
+            price: product.price,
+            quantity,
+          });
+        }
       }
 
       state.totalWithoutTax = calculateTotalWithoutTax(state.items);
@@ -127,6 +135,7 @@ const cartSlice = createSlice({
     },
     updateItemQuantity: (state, action) => {
       const { click, currentquantity } = action.payload;
+      console.log('check quantity',currentquantity, click );
       if (click >= 0 && click < state.items.length) {
         const newQuantity = currentquantity;
         if (newQuantity <= 0) {
@@ -140,8 +149,8 @@ const cartSlice = createSlice({
     },
     clearCart: (state) => {
       state.items = [];
-      state.orderSuccess = true,
-        state.totalWithoutTax = 0;
+      state.orderSuccess = true;
+      state.totalWithoutTax = 0;
       state.totalWithTax = 0;
     },
 

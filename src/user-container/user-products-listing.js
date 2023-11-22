@@ -7,27 +7,29 @@ import Fixeddiv from '../components/fixed-div';
 import Sidediv from '../components/side-div';
 import Dropdowns from '../components/dropdown';
 import _debounce from 'lodash/debounce';
-// import Button from '../components/button';
 import { fetchProductsData } from '../redux/Slices/products-slice';
 import ListingWrapper from './style';
 
 const ProductListing = ({ check = null }) => {
   const dispatch = useDispatch();
-  let { productsData, loading, error } = useSelector((state) => state.fetch);
-  // const [searchQuery, setSearchQuery] = useState('');
+  let { productsData, loading, error, total } = useSelector((state) => state.fetch);
   const [currentPage, setCurrentPage] = useState(1);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [sortOrder, setSortOrder] = useState('asc');
   const [Index, setIndex] = useState(0);
   const [filterText, setFilterText] = useState('Price');
+  const [color, setColor] = useState('');
+  const [colorText, setColorText] = useState('Color');
+  const [size, setSize] = useState('');
+  const [sizeText, setSizeText] = useState('Size');
   const [sortText, setSortText] = useState('Default Sorting(Asc)');
+
   const [searchTitle, setTitle] = useState('');
   const limit = 5;
 
   const handleSearch = _debounce((e) => {
     const query = e.target.value.toLowerCase();
-    // setSearchQuery(query);
     setTitle(query);
     debouncedFetchData(query);
   }, 500);
@@ -42,7 +44,9 @@ const ProductListing = ({ check = null }) => {
       minPrice,
       maxPrice,
       sortOrder,
-      sortField
+      sortField,
+      color,
+      size
     }));
   };
 
@@ -63,10 +67,12 @@ const ProductListing = ({ check = null }) => {
       maxPrice,
       sortField,
       sortOrder,
+      color,
+      size,
       limit: limit + (limit * (currentPage - 1)),
       skip: 0
     }));
-  }, [minPrice, maxPrice, sortOrder, currentPage]);
+  }, [minPrice, maxPrice, sortOrder, currentPage, color, size]);
 
   return (
     <>
@@ -77,24 +83,55 @@ const ProductListing = ({ check = null }) => {
             <div className='fw-bold d-flex align-items-center me-3 ms-5'>Filters:</div>
             <Dropdowns onPriceChange={(min, max) => {
               setMaxPrice(max); setMinPrice(min);
-              // setCurrentPage(1);
               setFilterText(`${min} - ${max}`);
             }}
-              names={filterText} Action1='1 - 200' Action2='200 - 800' Action3='800 - 1800' Action4='1800 - 2800' Action5='2800 - 4000' Action6='All' />
+              names={filterText}
+              actions={['1 - 200', '200 - 800', '800 - 1800', '1800 - 2800', '2800 - 4000', 'All']} />
           </div>
           <div className='d-flex '>
-            <div className='fw-bold d-flex align-items-center '>Sorting:</div>
             <Dropdowns onSelect={(value) => {
               setSortOrder(value);
               setSortText(value === 'asc' ? 'Asc' : 'Desc');
-            }} names={sortText} Action7='Asc' Action8='Desc' />
+            }} names={sortText}
+              actions={['Asc', 'Desc']} />
           </div>
+
+          <div className='d-flex '>
+            <Dropdowns
+              onSelectColor={(selectedColor) => {
+                if (selectedColor == '') {
+                  setColorText('AllColors');
+                  setColor(selectedColor);
+                } else {
+                  setColor(selectedColor);
+                  setColorText(selectedColor);
+                }
+              }}
+              names={colorText}
+              actions={['Grey', 'Black', 'Green', 'Maroon', 'Purple', 'NoColor']}
+            />
+          </div>
+
+          <div className='d-flex '>
+            <Dropdowns
+              onSelectSize={(selectedSize) => {
+                if (selectedSize == '') {
+                  setSizeText('AllSizes');
+                  setSize(selectedSize);
+                } else {
+                  setSize(selectedSize);
+                  setSizeText(selectedSize);
+                }
+              }}
+              names={sizeText}
+              actions={['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', 'NoSize']}
+            />
+          </div>
+
+
           <Col xs="auto" className="mb-3 mt-4">
             <Row className="align-items-center">
               <Col xs="auto">
-                {/* <Button onClick={handleSearch} variant="outline-primary" id="button-addon2" >
-                  Search
-                </Button> */}
               </Col>
               <Col xs="auto">
                 <input
@@ -147,10 +184,10 @@ const ProductListing = ({ check = null }) => {
                   </div>
                 </Col>
                 <Col className='ms-3 custom-size1'>
-                  <Fixeddiv
-                    check={check}
-                    Index={Index}
-                  />
+                  {total - 1 < (Index)
+                    ? <Fixeddiv check={check} Index={0} />
+                    : <Fixeddiv check={check} Index={Index} />
+                  }
                 </Col>
               </div>
             </Row>

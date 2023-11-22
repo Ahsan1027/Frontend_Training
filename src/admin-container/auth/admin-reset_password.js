@@ -39,7 +39,7 @@ const Reset = () => {
             navigate('/reset-password');
             setError(true);
             // return;
-        } else {
+        } else if(error?.payload.message == 'Email sent successfully'){
             setError(false);
             alert('Email Sent Successfully');
             // return;
