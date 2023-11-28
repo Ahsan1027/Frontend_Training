@@ -88,7 +88,12 @@ const cartSlice = createSlice({
     },
     addToCart: (state, action) => {
       state.orderSuccess = false;
-      const { product, color, size, quantity } = action.payload;
+      const {
+        product,
+        color,
+        size,
+        quantity
+      } = action.payload;
 
       const existingItem = state.items.find(
         (item) =>
@@ -135,7 +140,6 @@ const cartSlice = createSlice({
     },
     updateItemQuantity: (state, action) => {
       const { click, currentquantity } = action.payload;
-      console.log('check quantity',currentquantity, click );
       if (click >= 0 && click < state.items.length) {
         const newQuantity = currentquantity;
         if (newQuantity <= 0) {

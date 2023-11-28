@@ -34,10 +34,6 @@ const Checkout = () => {
         setAddress(true);
     };
 
-    // if (cartItems.length == 0 && !orderSuccess) {
-    //     alert('Cart is Empty!!');
-    // }
-
     const backPage = () => {
         navigate('/shopping-page');
     };

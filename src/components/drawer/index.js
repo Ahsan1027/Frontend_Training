@@ -7,6 +7,7 @@ import { addAddress } from '../../redux/Slices/user-cart-slice';
 import { addPayment } from '../../redux/Slices/payment-slice';
 import { updateCustomerId } from '../../redux/Slices/auth-slice';
 import { getPayment } from '../../redux/Slices/payment-slice';
+import { notification } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Tables from '../table';
@@ -161,18 +162,45 @@ function OffCanvasExample({
 
     const handleClose = (productName, price, stock, rating) => {
         if ((price) < 1 || (stock) < 1 || (rating) < 1) {
+            notification.error({
+                message: 'Error',
+                description: 'Price, Stock, Rating cannot be negative !',
+                type: 'error',
+                duration: 1.5,
+            });
             setError(true);
-            alert('Price, stock, and rating cannot be less than 1 !');
             return;
         }
+
+        if (price % 1 !== 0 || stock % 1 !== 0 || rating % 1 !== 0) {
+            notification.error({
+                message: 'Error',
+                description: 'Price, Stock, Rating cannot be in decimal !',
+                type: 'error',
+                duration: 1.5,
+            });
+            setError(true);
+            return;
+        }
+
         if (rating > 5) {
             setError(true);
-            alert('Rating cannot be greater than 5');
+            notification.error({
+                message: 'Error',
+                description: 'Rating cannot be greater than 5 !',
+                type: 'error',
+                duration: 1.5,
+            });
             return;
         }
         if (!selectedFile && Name == 'Add Product') {
             setError(true);
-            alert('Fill all Empty Fields!');
+            notification.error({
+                message: 'Error',
+                description: 'Select Images !',
+                type: 'error',
+                duration: 1.5,
+            });
             return;
         } else if (Name == 'Add Product') {
             onClose(selectedFile, productName, price, stock, rating, remainingFiles, selectedSizes, selectedColors);
@@ -430,14 +458,21 @@ function OffCanvasExample({
                                     (!productName || !price || isNaN(price) || !stock || isNaN(stock) || !rating || isNaN(rating) || !selectedSizes.length || !selectedColors.length)
                                 ) {
                                     setError(true);
-                                    alert('Fill all Empty Fields or Enter the Correct Values !');
+                                    notification.error({
+                                        message: 'Error',
+                                        description: 'Fill all Empty Fields or Enter the Correct Values !',
+                                        type: 'error',
+                                        duration: 1.5,
+                                    });
                                     return;
                                 }
                                 handleClose(productName, price, stock, rating, selectedSizes, selectedColors);
                             }} className={`mt-5 custom-button ${Name === 'Add Product' && checksError ? 'disable-button' : ''}`}
                                 disabled={false}
                             >
-                                {text}</Button>
+
+                                {text}
+                            </Button>
                         </div>
                     </Offcanvas.Body>
                 </EditWrapper >
@@ -617,7 +652,12 @@ function OffCanvasExample({
                                 </Form.Group>
                             </Form>
                             {isEmptyFields && (
-                                alert('Fill empty fields first')
+                                notification.error({
+                                    message: 'Error',
+                                    description: 'Fill Empty Fields First  !',
+                                    type: 'error',
+                                    duration: 1.5,
+                                })
                             )}
 
                             <Button onClick={handleClose1} disabled={!isFormComplete()}
@@ -729,13 +769,23 @@ function OffCanvasExample({
                                 </Form.Group>
                             </Form>
                             {isEmptyFields && (
-                                alert('Fill empty fields first')
+                                notification.error({
+                                    message: 'Error',
+                                    description: 'Fill all Empty Fields First !',
+                                    type: 'error',
+                                    duration: 1.5,
+                                })
                             )}
                             <Button onClick={() => {
                                 if (!isInvalidCardNum(cardNum)) {
                                     handleClose4();
                                 } else {
-                                    alert('Card number is not valid.');
+                                    notification.error({
+                                        message: 'Error',
+                                        description: 'Card number is not valid !',
+                                        type: 'error',
+                                        duration: 1.5,
+                                    });
                                 }
                             }} className='mt-3 custom-button1' disabled={!isPaymentComplete()}>{text}</Button>
                         </EditWrapper>
@@ -845,13 +895,23 @@ function OffCanvasExample({
                                 handleClose7()
                             )}
                             {isEmptyFields && (
-                                alert('Fill empty fields first')
+                                notification.error({
+                                    message: 'Error',
+                                    description: 'Fill empty fields first !',
+                                    type: 'error',
+                                    duration: 1.5,
+                                })
                             )}
                             <Button onClick={() => {
                                 if (!isInvalidCardNum(cardNum)) {
                                     handleClose4();
                                 } else {
-                                    alert('Card number is not valid.');
+                                    notification.error({
+                                        message: 'Error',
+                                        description: 'Card Number is not valid !',
+                                        type: 'error',
+                                        duration: 1.5,
+                                    });
                                 }
                             }} className='mt-3 custom-button1' disabled={!isPaymentComplete()}>{text}</Button>
                         </EditWrapper>

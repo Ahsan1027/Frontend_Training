@@ -4,6 +4,7 @@ import { Table } from 'react-bootstrap';
 import Trash from '../trash';
 import Edit from '../drawer';
 import { deleteProduct, editProduct } from '../../redux/Slices/products-slice';
+import { notification } from 'antd';
 import { getOrderDetail } from '../../redux/Slices/order-slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -57,10 +58,15 @@ const Tables = ({ headings, data, name }) => {
         setselectedProductId(productId);
     };
 
-    const editProductHandler = async (thumbnail, title, price, stock, rating, prodImages,images, deleted, selectedSizes, selectedColors, prodId) => {
+    const editProductHandler = async (thumbnail, title, price, stock, rating, prodImages, images, deleted, selectedSizes, selectedColors, prodId) => {
         try {
             if (isNaN(price) || isNaN(stock) || isNaN(rating)) {
-                alert('Must be a number !');
+                notification.error({
+                    message: 'Error',
+                    description: 'Must be a Number !',
+                    type: 'error',
+                    duration: 1.5,
+                });
                 return;
             }
 
@@ -199,13 +205,21 @@ const Tables = ({ headings, data, name }) => {
                                                             </svg>
                                                         </>
                                                     )}
+                                                    {heading == 'Price' && (
+                                                        <>
+                                                            <td className='fw-bold'>${item.price}</td>
+                                                        </>
+                                                    )}
                                                     {heading === 'Colors' || heading === 'Sizes' ? (
                                                         <>
                                                             {item[heading.toLowerCase()] ? item[heading.toLowerCase()].join(', ') : ''}
                                                         </>
                                                     ) : (
-                                                        item[heading.toLowerCase()]
-                                                    )}
+                                                        heading != 'Colors' && heading != 'Sizes' && heading != 'Price' && (
+                                                            <>
+                                                                {item[heading.toLowerCase()]}
+                                                            </>
+                                                        ))}
                                                 </td>
                                             ))}
                                         </tr>
@@ -221,7 +235,11 @@ const Tables = ({ headings, data, name }) => {
                                                     {heading === 'Title' && (
                                                         <img src={`http://localhost:4000/${item.thumbnail}`} style={{ width: '30px', height: '30px' }} />
                                                     )}
-                                                    {item[heading.toLowerCase()]}
+                                                    {heading === 'Price' ? (
+                                                        <td>${item.price}</td>
+                                                    ) : (
+                                                        item[heading.toLowerCase()]
+                                                    )}
                                                 </td>
                                             ))}
                                         </tr>
@@ -277,7 +295,7 @@ const Tables = ({ headings, data, name }) => {
                                                     </tr>
                                                 ))}
                                             </td>
-                                            <td className='fw-bold'>{item.totalAmount}</td>
+                                            <td className='fw-bold'>${item.totalAmount}</td>
                                             <td><div className=' text-light bg-success small' style={{ width: '55px', height: '25px' }}>
                                                 <div className='ms-2'>{item.status}</div></div></td>
                                             <td ><svg onClick={() => {
@@ -308,7 +326,7 @@ const Tables = ({ headings, data, name }) => {
                                                     <div className='d-flex'>
                                                         {item['missingFields']?.length > 0 && (
                                                             <p className='ms-1'>
-                                                                {item['missingFields'].join(', ')} are missing
+                                                                {item['missingFields'].join(', ')}
                                                             </p>
                                                         )}
                                                     </div>

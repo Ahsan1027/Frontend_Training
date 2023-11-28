@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { Image } from 'react-bootstrap';
 import { removeFromCart } from '../../redux/Slices/user-cart-slice';
 import { useDispatch } from 'react-redux';
+import { notification } from 'antd';
 import { updateItemQuantity } from '../../redux/Slices/user-cart-slice';
 import Button from '../button';
 import Trash from '../trash';
@@ -22,7 +23,12 @@ const ShoppingCart = ({ images, title, price, quantity, click, colors, sizes, na
         if (newQuantity <= stock) {
             setQuantity(newQuantity);
         } else {
-            alert('Not enough Stock');
+            notification.info({
+                message: 'Info',
+                description: 'Not enough Stock !',
+                type: 'info',
+                duration: 1.5,
+              });
         }
     };
 

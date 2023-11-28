@@ -8,6 +8,7 @@ import Sidediv from '../components/side-div';
 import Dropdowns from '../components/dropdown';
 import _debounce from 'lodash/debounce';
 import { fetchProductsData } from '../redux/Slices/products-slice';
+import { getProductData } from '../redux/Slices/products-slice';
 import ListingWrapper from './style';
 
 const ProductListing = ({ check = null }) => {
@@ -21,6 +22,7 @@ const ProductListing = ({ check = null }) => {
   const [filterText, setFilterText] = useState('Price');
   const [color, setColor] = useState('');
   const [colorText, setColorText] = useState('Color');
+  const [data, setData] = useState(null);
   const [size, setSize] = useState('');
   const [sizeText, setSizeText] = useState('Size');
   const [sortText, setSortText] = useState('Default Sorting(Asc)');
@@ -50,14 +52,6 @@ const ProductListing = ({ check = null }) => {
     }));
   };
 
-  window.onscroll = function () {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-      if (productsData?.products?.length < productsData.total) {
-        setCurrentPage(currentPage + 1);
-      }
-    }
-  };
-
   useEffect(() => {
     const sortField = 'price';
     dispatch(fetchProductsData({
@@ -72,7 +66,22 @@ const ProductListing = ({ check = null }) => {
       limit: limit + (limit * (currentPage - 1)),
       skip: 0
     }));
-  }, [minPrice, maxPrice, sortOrder, currentPage, color, size]);
+  }, [minPrice, maxPrice, sortOrder, currentPage, color, size, data]);
+
+  const handleClick = async () => {
+    const prodId = productsData.products[0]._id;
+    const data1 = await dispatch(getProductData({ productId: prodId }));
+    setData(data1?.payload?.product);
+  };
+
+
+  window.onscroll = function () {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+      if (productsData?.products?.length < productsData.total) {
+        setCurrentPage(currentPage + 1);
+      }
+    }
+  };
 
   return (
     <>
@@ -163,37 +172,43 @@ const ProductListing = ({ check = null }) => {
             </div>
           </div>
         )}
-        {/* {!error && !loading && ( */}
-        <>
-          <Container className='ms-5 '>
-            <Row >
-              <div className='d-flex mt-5' >
-                <Col className='scrolling custom-size' lg={6}>
-                  <div className="d-flex flex-wrap">
-                    {
-                      productsData?.products?.map((pro, index) => (
-                        <Sidediv
-                          key={pro?._id}
-                          data={pro}
-                          index={index}
-                          newIndex={(value) => {
-                            setIndex(value);
-                          }} />
-                      ))
+        {!error && !loading && (
+          <>
+            <Container className='ms-5 '>
+              <Row >
+                <div className='d-flex mt-5' >
+                  <Col className='scrolling custom-size' lg={6}>
+                    <div className="d-flex flex-wrap">
+                      {
+                        productsData?.products?.map((pro, index) => (
+                          <Sidediv
+                            key={pro?._id}
+                            data={pro}
+                            index={index}
+                            newIndex={async (value) => {
+                              setIndex(value);
+                              const productId = productsData.products[value]._id;
+                              const data1 = await dispatch(getProductData({ productId }));
+                              setData(data1?.payload?.product);
+                            }} />
+                        ))
+                      }
+                    </div>
+                  </Col>
+                  <Col className='ms-3 custom-size1'>
+                    {total - 1 < (Index) ?
+                      <>
+                        {handleClick}
+                        <Fixeddiv check={check} Index={0} data={data} />
+                      </>
+                      : <Fixeddiv check={check} Index={Index} data={data} />
                     }
-                  </div>
-                </Col>
-                <Col className='ms-3 custom-size1'>
-                  {total - 1 < (Index)
-                    ? <Fixeddiv check={check} Index={0} />
-                    : <Fixeddiv check={check} Index={Index} />
-                  }
-                </Col>
-              </div>
-            </Row>
-          </Container>
-        </>
-        {/* )} */}
+                  </Col>
+                </div>
+              </Row>
+            </Container>
+          </>
+        )}
       </ListingWrapper>
     </>
   );

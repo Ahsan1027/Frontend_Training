@@ -5,6 +5,7 @@ import { Form } from 'react-bootstrap';
 import Input from '../../components/input';
 import Heading from '../../components/heading';
 import Button from '../../components/button';
+import { notification } from 'antd';
 
 import HeadingStyle from '../../components/heading/style';
 import ButtonStyle from '../../components/button/style';
@@ -41,7 +42,12 @@ const Reset = () => {
             // return;
         } else if(error?.payload.message == 'Email sent successfully'){
             setError(false);
-            alert('Email Sent Successfully');
+            notification.success({
+                message: 'success',
+                description: 'Email sent successfully',
+                type: 'success',
+                duration: 1.5,
+              });
             // return;
         }
     };

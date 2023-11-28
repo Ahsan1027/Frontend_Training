@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Container } from 'react-bootstrap';
+import { notification } from 'antd';
 import { Form } from 'react-bootstrap';
 import Input from '../components/input';
 import Heading from '../components/heading';
@@ -39,14 +40,19 @@ const Signup = () => {
             setPasswordError('Password must be at least 8 characters long and must contain special characters.');
             return;
         }
-        const  error  = await dispatch(SignupUser({ name, email, password, mobile }));
+        const error = await dispatch(SignupUser({ name, email, password, mobile }));
         if (error?.payload == 'Email already in use') {
             setEmailError(error.payload);
             navigate('/Signup');
             setError(true);
         } else {
             setError(false);
-            alert(`Welcome ${name}`);
+            notification.success({
+                message: 'Success',
+                description: `Welcome ${name}`,
+                type: 'success',
+                duration: 1.5,
+            });
             navigate('/login');
         }
     };

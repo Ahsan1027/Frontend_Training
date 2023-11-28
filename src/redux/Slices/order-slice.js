@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { notification } from 'antd';
 import axios from 'axios';
 
 export const fetchOrdersData = createAsyncThunk(
@@ -57,12 +58,27 @@ export const addOrder = createAsyncThunk(
     } catch (error) {
       if (error.response) {
         if (error.response.data && error.response.data.message) {
-          alert(`Error: ${error.response.data.message}`);
+          notification.error({
+            message: 'Error',
+            description: `Error: ${error.response.data.message} !`,
+            type: 'error',
+            duration: 1.5,
+          });
         } else {
-          alert('An error occurred. Please try again later.');
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred. Please try again later !',
+            type: 'error',
+            duration: 1.5,
+          });
         }
       } else {
-        alert('An error occurred. Please try again later.');
+        notification.error({
+          message: 'Error',
+          description: 'An error occurred. Please try again later !',
+          type: 'error',
+          duration: 1.5,
+        });
       }
       return thunkAPI.rejectWithValue(error.response.data);
     }

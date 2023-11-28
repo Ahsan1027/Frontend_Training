@@ -24,6 +24,21 @@ export const fetchProductsData = createAsyncThunk(
   }
 );
 
+export const getProductData = createAsyncThunk(
+  'fetch/getProductData',
+  async ({
+    productId
+  }, thunkAPI) => {
+    try {
+      const response = await axios.get(`http://localhost:4000/api/prod/get-prod-detail?productId=${productId}`);
+      const productsData = response.data;
+      return productsData;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 export const deleteProduct = createAsyncThunk(
   'fetch/deleteProduct',
   async ({ productId, token }, thunkAPI) => {
@@ -179,6 +194,22 @@ const FetchSlice = createSlice({
         state.error = action.payload;
         state.productsData = [];
       })
+      .addCase(getProductData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getProductData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.productsData = action.payload;
+        console.log('check action payload', action.payload);
+        // state.orderSuccess = true;
+        state.error = null;
+      })
+      .addCase(getProductData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.productsData = [];
+      })
       .addCase(addProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -199,13 +230,14 @@ const FetchSlice = createSlice({
       })
       .addCase(importBulkProduct.fulfilled, (state, action) => {
         state.loading = false;
+        console.log('check action payload', action.payload);
         state.productsData?.products?.push(action.payload.productsData);
         state.fileData = action.payload.productsData.length;
         state.fileError = action.payload.total;
         state.fileName = action.payload.filename;
         state.fileErrors = action.payload.errorRows;
-        state.addSuccess = true,
-          state.error = null;
+        // state.addSuccess = true;
+        state.error = null;
       })
       .addCase(importBulkProduct.rejected, (state, action) => {
         state.loading = false;

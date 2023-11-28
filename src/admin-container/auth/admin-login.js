@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Container } from 'react-bootstrap';
 import { Form } from 'react-bootstrap';
+import { notification } from 'antd';
 import Input from '../../components/input';
 import Heading from '../../components/heading';
 import Button from '../../components/button';
@@ -43,7 +44,12 @@ const Login = ({ user = null }) => {
             setPasswordError(resp.payload.message);
             return;
         } else if(resp?.payload.message == 'Please verify your account first on your Email !'){
-            alert(resp.payload.message);
+            notification.error({
+                message: 'Error',
+                description: resp.payload.message,
+                type: 'error',
+                duration: 1.5,
+              });
             return;
         }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import Edit from '../drawer';
 import { useDispatch, useSelector } from 'react-redux';
+import { notification } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 import Trash from '../trash';
 import Button from '../button';
@@ -39,7 +40,12 @@ const OrderSummary = ({ text1 = null, text2 = null, text3 = null, text4 = null, 
         if (productsinCart.length > 0) {
             navigate('/checkout-page');
         } else if (productsinCart.length === 0) {
-            alert('Your Cart is Empty');
+            notification.info({
+                message: 'Info',
+                description: 'Your Cart is Empty !',
+                type: 'info',
+                duration: 1.5,
+              });
         }
     };
 
@@ -55,7 +61,12 @@ const OrderSummary = ({ text1 = null, text2 = null, text3 = null, text4 = null, 
             await dispatch(addOrder({ orderId, username, products: productsinCart, email, totalAmount: totalWithTax + 100, cardId, customerId, token }));
             await dispatch(clearCart());
         } else{
-            alert('Cart is Empty !');
+            notification.info({
+                message: 'Info',
+                description: 'Cart is Empty !',
+                type: 'info',
+                duration: 1.5,
+              });
         }
     };
 

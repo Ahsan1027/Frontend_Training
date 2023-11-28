@@ -32,7 +32,7 @@ const Rectangle = ({ title = null, totalProducts = null, totalOrder = null, tota
                             <div className='ms-3'> Total Products {totalProducts}
                             </div>
                             <div className='ms-5' >Total Orders {totalOrder}
-                                <div className='d-flex'> Total Sales {totalSales}</div>
+                                <div className='d-flex'> Total Sales ${Math.ceil(totalSales)}</div>
                             </div>
                         </div>
                     </div>

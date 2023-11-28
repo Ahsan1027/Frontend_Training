@@ -5,6 +5,7 @@ import { Form } from 'react-bootstrap';
 import Input from '../../components/input';
 import Heading from '../../components/heading';
 import Button from '../../components/button';
+import { notification } from 'antd';
 
 import HeadingStyle from '../../components/heading/style';
 import ButtonStyle from '../../components/button/style';
@@ -29,10 +30,14 @@ const NewPassword = () => {
         e.preventDefault();
 
         const resp = await dispatch(newPassword({ password, confirmPassword, token }));
-        console.log('check response', resp?.payload);
         if (resp?.payload == 'Link Expired') {
             setConfirmPasswordError('');
-            alert(resp?.payload);
+            notification.error({
+                message: 'Error',
+                description: resp.payload,
+                type: 'error',
+                duration: 1.5,
+            });
             // return;
         }
         else if (password != confirmPassword) {
@@ -40,7 +45,7 @@ const NewPassword = () => {
             setPasswordError('');
             // return;
         }
-        else if(password.length < 8){
+        else if (password.length < 8) {
             setConfirmPasswordError('');
             setPasswordError('Password must be Atleast 8 Characters !');
             // return;
