@@ -31,7 +31,6 @@ module.exports = {
       'react/prop-types': 0,
       'semi': ['error', 'always'],
       'quotes': ['error', 'single'],
-      'hyphen': ['off'],
       'no-trailing-spaces': ['error'],
     }
 };

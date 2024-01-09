@@ -18,7 +18,6 @@ import { SignupUser } from '../redux/Slices/auth-slice';
 const Signup = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    // const { error } = useSelector((state) => state.login);
 
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');

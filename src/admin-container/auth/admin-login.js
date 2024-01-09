@@ -111,9 +111,6 @@ const Login = ({ user = null }) => {
                             {passwordError ? (
                                 <div className="text-danger">{passwordError}</div>
                             ) : null}
-                            {/* {error ? (
-                                <div className="text-danger">{error}</div>
-                            ) : null} */}
                         </Form.Group>
 
                         <Form.Group>
